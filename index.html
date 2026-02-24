@@ -1568,41 +1568,52 @@ input[type="date"] {
   }
   .field label { font-size: 12px; margin-bottom: 4px; }
 
-  /* Product table - compact mobile layout */
+  /* Product table - compact card layout on mobile */
   .product-table thead { display: none; }
-  .product-table, .product-table tbody, .product-table tr, .product-table td {
-    display: block; width: 100%;
-  }
+  .product-table { display: block; }
+  .product-table tbody { display: flex; flex-direction: column; gap: 8px; padding: 12px; }
   .product-table tbody tr {
-    padding: 14px 16px;
-    border-bottom: 1px solid var(--border-light);
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
     grid-template-rows: auto auto;
-    gap: 8px;
+    gap: 6px 10px;
+    padding: 12px;
+    background: var(--marble-1);
+    border-radius: 10px;
+    border: 1px solid var(--border-light);
     align-items: center;
   }
-  /* Product name spans full width */
-  .product-table tbody td:first-child {
+  /* Row 1: product name spans all 3 columns */
+  .product-table tbody td:nth-child(1) {
     grid-column: 1 / -1;
-    padding: 0 0 4px 0;
-  }
-  .product-table tbody td { padding: 0; }
-  /* Price + Qty + Total in a compact row */
-  .product-table tbody td::before {
-    content: attr(data-label);
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--text-muted);
-    display: block;
+    padding: 0 0 6px 0;
+    border-bottom: 1px solid var(--border-light);
     margin-bottom: 2px;
   }
-  .product-table tbody td:first-child::before { content: ''; display: none; }
+  /* Row 2: price | qty | total side by side */
+  .product-table tbody td:nth-child(2),
+  .product-table tbody td:nth-child(3),
+  .product-table tbody td:nth-child(4) {
+    padding: 0;
+    text-align: center;
+  }
+  .product-table tbody td::before {
+    content: attr(data-label);
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-faint);
+    display: block;
+    margin-bottom: 3px;
+    letter-spacing: 0.5px;
+  }
+  .product-table tbody td:nth-child(1)::before { display: none; }
   .product-name-cell { justify-content: flex-start; }
-  .product-icon { width: 32px; height: 32px; font-size: 14px; border-radius: 8px; }
-  .product-name-text { font-size: 14px; }
-  .free-tag { font-size: 10px; padding: 2px 7px; }
-  .product-table input[type="number"] { width: 100%; font-size: 14px; padding: 8px 10px; }
+  .product-icon { width: 28px; height: 28px; font-size: 13px; border-radius: 7px; }
+  .product-name-text { font-size: 13px; }
+  .free-tag { font-size: 9px; padding: 2px 6px; }
+  .product-table input[type="number"] { width: 100%; font-size: 14px; padding: 7px 6px; }
+  .line-total { font-size: 13px; text-align: center !important; }
+  .price-display { font-size: 12px; text-align: center !important; }
 
   .stone-picker { padding: 16px; gap: 16px; flex-direction: row; align-items: center; }
   .stone-swatch { width: 40px; height: 40px; }
