@@ -1532,10 +1532,19 @@ body {
 .reveal-delay-2 { transition-delay: 0.2s; }
 
 /* ═══════ RESPONSIVE ═══════ */
-/* Fix date inputs RTL everywhere */
+/* Fix date inputs on mobile Safari */
 input[type="date"] {
   direction: ltr;
   text-align: right;
+  width: 100% !important;
+  min-width: 0;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+/* Fix stone picker overflow */
+.stone-picker {
+  flex-wrap: wrap;
 }
 
 @media (max-width: 768px) {
@@ -1615,8 +1624,9 @@ input[type="date"] {
   .line-total { font-size: 13px; text-align: center !important; }
   .price-display { font-size: 12px; text-align: center !important; }
 
-  .stone-picker { padding: 16px; gap: 16px; flex-direction: row; align-items: center; }
-  .stone-swatch { width: 40px; height: 40px; }
+  .stone-picker { padding: 14px 16px; gap: 12px; flex-direction: row; align-items: center; justify-content: center; flex-wrap: wrap; }
+  .stone-swatch { width: 38px; height: 38px; }
+  .stone-options { gap: 10px; }
 
   .summary-wrapper { margin: 16px 12px 0; padding: 20px 16px; }
   .summary-title { font-size: 16px; margin-bottom: 14px; }
