@@ -1532,57 +1532,130 @@ body {
 .reveal-delay-2 { transition-delay: 0.2s; }
 
 /* ═══════ RESPONSIVE ═══════ */
-@media (max-width: 768px) {
-  .header { padding: 12px 20px; }
-  .header-actions { display: none; }
-  .hero { padding: 120px 24px 80px; min-height: 70vh; }
-  .hero-deco .corner-tl, .hero-deco .corner-br { display: none; }
-  .form-wrapper { padding: 0 16px; }
-  .form-card { padding: 28px 20px; }
-  .form-grid { grid-template-columns: 1fr 1fr; }
-  .section-header { padding-top: 32px; }
-  .section-header .icon-box { width: 44px; height: 44px; border-radius: 12px; }
-  .section-header .titles h2 { font-size: 21px; }
+/* Fix date inputs RTL everywhere */
+input[type="date"] {
+  direction: ltr;
+  text-align: right;
+}
 
+@media (max-width: 768px) {
+  .header { padding: 10px 16px; }
+  .header-actions { display: none; }
+  .hero { padding: 90px 20px 40px; min-height: auto; }
+  .hero h1 { font-size: 28px; }
+  .hero-sub { font-size: 15px; margin-bottom: 24px; }
+  .hero-eyebrow { font-size: 12px; padding: 8px 18px; margin-bottom: 24px; }
+  .hero-cta { padding: 14px 32px; font-size: 15px; }
+  .hero-deco .corner-tl, .hero-deco .corner-br { display: none; }
+  .hero-deco .circle-1 { width: 300px; height: 300px; }
+  .hero-deco .circle-2 { width: 220px; height: 220px; }
+  .hero-deco .circle-3 { width: 150px; height: 150px; }
+  .hero-divider svg { height: 40px; }
+
+  .form-wrapper { padding: 0 12px; }
+  .form-card { padding: 20px 16px; margin-bottom: 12px; }
+  .form-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .section-header { padding-top: 28px; margin-bottom: 16px; gap: 12px; }
+  .section-header .icon-box { width: 38px; height: 38px; border-radius: 10px; }
+  .section-header .icon-box svg { width: 18px; height: 18px; }
+  .section-header .titles h2 { font-size: 18px; }
+  .section-header .titles p { font-size: 12px; }
+
+  /* Smaller inputs on mobile */
+  .field input, .field select, .field textarea {
+    padding: 10px 14px;
+    font-size: 14px;
+  }
+  .field label { font-size: 12px; margin-bottom: 4px; }
+
+  /* Product table - compact mobile layout */
   .product-table thead { display: none; }
   .product-table, .product-table tbody, .product-table tr, .product-table td {
     display: block; width: 100%;
   }
   .product-table tbody tr {
-    padding: 20px;
+    padding: 14px 16px;
     border-bottom: 1px solid var(--border-light);
-  }
-  .product-table tbody td {
-    padding: 8px 0;
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+    gap: 8px;
     align-items: center;
   }
+  /* Product name spans full width */
+  .product-table tbody td:first-child {
+    grid-column: 1 / -1;
+    padding: 0 0 4px 0;
+  }
+  .product-table tbody td { padding: 0; }
+  /* Price + Qty + Total in a compact row */
   .product-table tbody td::before {
     content: attr(data-label);
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 600;
     color: var(--text-muted);
+    display: block;
+    margin-bottom: 2px;
   }
-  .product-table tbody td:first-child::before { content: ''; }
+  .product-table tbody td:first-child::before { content: ''; display: none; }
   .product-name-cell { justify-content: flex-start; }
-  .product-table input[type="number"] { width: 80px; }
-  .stone-picker { flex-direction: column; align-items: flex-start; }
-  .summary-wrapper { margin: 24px 16px 0; padding: 24px 20px; }
-  .summary-grand .s-value { font-size: 26px; }
+  .product-icon { width: 32px; height: 32px; font-size: 14px; border-radius: 8px; }
+  .product-name-text { font-size: 14px; }
+  .free-tag { font-size: 10px; padding: 2px 7px; }
+  .product-table input[type="number"] { width: 100%; font-size: 14px; padding: 8px 10px; }
 
-  .payment-grid { grid-template-columns: 1fr; }
-  .submit-btn { padding: 18px 44px; font-size: 18px; }
-  .footer-inner { grid-template-columns: 1fr; gap: 32px; }
-  .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
-  .modal { padding: 40px 28px; }
+  .stone-picker { padding: 16px; gap: 16px; flex-direction: row; align-items: center; }
+  .stone-swatch { width: 40px; height: 40px; }
+
+  .summary-wrapper { margin: 16px 12px 0; padding: 20px 16px; }
+  .summary-title { font-size: 16px; margin-bottom: 14px; }
+  .summary-line { padding: 6px 0; }
+  .summary-line .s-label { font-size: 13px; }
+  .summary-line .s-value { font-size: 14px; }
+  .summary-grand { padding: 10px 0 6px; }
+  .summary-grand .s-label { font-size: 17px; }
+  .summary-grand .s-value { font-size: 24px; }
+  .advance-box { padding: 12px 14px; margin-top: 10px; }
+  .advance-box .a-label { font-size: 13px; }
+  .advance-box .a-value { font-size: 17px; }
+
+  /* Payment - keep side by side but compact */
+  .payment-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .payment-card { padding: 14px 12px; flex-direction: column; gap: 6px; text-align: center; }
+  .payment-percent { font-size: 26px; }
+  .payment-title { font-size: 12px; }
+  .payment-desc { font-size: 11px; }
+  .bank-card { padding: 16px; margin-top: 12px; }
+  .bank-title { font-size: 14px; margin-bottom: 10px; }
+  .bank-details { font-size: 13px; }
+
+  .terms-list li { font-size: 12px; gap: 10px; padding: 5px 0; }
+  .terms-list li .t-num { width: 24px; height: 24px; font-size: 11px; border-radius: 6px; }
+  .terms-warning { padding: 14px 16px; margin-top: 14px; }
+  .terms-warning p { font-size: 12px; }
+  .agree-wrapper { padding: 16px; margin-top: 20px; gap: 10px; }
+  .agree-wrapper input[type="checkbox"] { width: 20px; height: 20px; }
+  .agree-wrapper label { font-size: 12px; }
+
+  .submit-area { padding: 28px 16px 48px; }
+  .submit-deco { margin-bottom: 24px; }
+  .submit-btn { padding: 16px 40px; font-size: 17px; }
+  .submit-note { font-size: 12px; }
+
+  .footer { padding: 32px 20px 24px; }
+  .footer-inner { grid-template-columns: 1fr; gap: 24px; padding-bottom: 20px; }
+  .footer-bottom { flex-direction: column; gap: 6px; text-align: center; font-size: 11px; }
+  .modal { padding: 32px 24px; }
+  .modal h3 { font-size: 22px; }
+  .modal .order-num { font-size: 32px; }
 }
 
-@media (max-width: 480px) {
-  .hero h1 { font-size: 30px; }
-  .hero-sub { font-size: 16px; }
-  .logo-text .brand { font-size: 15px; }
-  .form-grid { grid-template-columns: 1fr; }
+@media (max-width: 420px) {
+  .form-grid { grid-template-columns: 1fr; gap: 10px; }
+  .hero h1 { font-size: 24px; }
+  .logo-text .brand { font-size: 14px; }
+  .logo-mark { width: 42px; height: 42px; }
+  .logo-mark .num { font-size: 15px; }
 }
 
 @keyframes spin { to { transform: rotate(360deg); } }
