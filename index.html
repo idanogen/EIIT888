@@ -2249,6 +2249,7 @@ function recalc() {
 
 document.querySelectorAll('.qty-input, .price-input').forEach(input => {
   input.addEventListener('input', recalc);
+  input.addEventListener('focus', () => input.select());
 });
 
 /* ═══════ SUBMIT ═══════ */
