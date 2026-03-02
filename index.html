@@ -718,6 +718,14 @@ body {
   color: var(--text-primary);
 }
 
+.product-sku {
+  display: block;
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
 .free-tag {
   display: inline-flex;
   align-items: center;
@@ -1836,55 +1844,55 @@ input[type="date"] {
               </tr>
             </thead>
             <tbody>
-              <tr>
+              <tr data-sku="1001">
                 <td data-label="">
                   <div class="product-name-cell">
                     <div class="product-icon">⚡</div>
-                    <span class="product-name-text">נקודת אינדוקציה קוטר 18</span>
+                    <div><span class="product-name-text">נקודת אינדוקציה קוטר 18</span><span class="product-sku">מק״ט: 1001</span></div>
                   </div>
                 </td>
-                <td data-label="מחיר יח׳"><input type="number" class="price-input" data-row="0" min="0" placeholder="₪"></td>
+                <td data-label="מחיר יח׳"><input type="number" class="price-input" data-row="0" min="0" value="4661" placeholder="₪"></td>
                 <td data-label="כמות"><input type="number" class="qty-input" data-row="0" min="0" value="0"></td>
                 <td data-label="סה״כ"><span class="line-total" data-total="0">₪ 0</span></td>
               </tr>
-              <tr>
+              <tr data-sku="1002">
                 <td data-label="">
                   <div class="product-name-cell">
                     <div class="product-icon">⚡</div>
-                    <span class="product-name-text">נקודת אינדוקציה קוטר 24</span>
+                    <div><span class="product-name-text">נקודת אינדוקציה קוטר 24</span><span class="product-sku">מק״ט: 1002</span></div>
                   </div>
                 </td>
-                <td data-label="מחיר יח׳"><input type="number" class="price-input" data-row="1" min="0" placeholder="₪"></td>
+                <td data-label="מחיר יח׳"><input type="number" class="price-input" data-row="1" min="0" value="4661" placeholder="₪"></td>
                 <td data-label="כמות"><input type="number" class="qty-input" data-row="1" min="0" value="0"></td>
                 <td data-label="סה״כ"><span class="line-total" data-total="1">₪ 0</span></td>
               </tr>
-              <tr>
+              <tr data-sku="1003">
                 <td data-label="">
                   <div class="product-name-cell">
                     <div class="product-icon">⚡</div>
-                    <span class="product-name-text">נקודת אינדוקציה קוטר 28</span>
+                    <div><span class="product-name-text">נקודת אינדוקציה קוטר 28</span><span class="product-sku">מק״ט: 1003</span></div>
                   </div>
                 </td>
-                <td data-label="מחיר יח׳"><input type="number" class="price-input" data-row="2" min="0" placeholder="₪"></td>
+                <td data-label="מחיר יח׳"><input type="number" class="price-input" data-row="2" min="0" value="4661" placeholder="₪"></td>
                 <td data-label="כמות"><input type="number" class="qty-input" data-row="2" min="0" value="0"></td>
                 <td data-label="סה״כ"><span class="line-total" data-total="2">₪ 0</span></td>
               </tr>
-              <tr>
+              <tr data-sku="1004">
                 <td data-label="">
                   <div class="product-name-cell">
                     <div class="product-icon">🎛️</div>
-                    <span class="product-name-text">בקר BT</span>
+                    <div><span class="product-name-text">בקר BT</span><span class="product-sku">מק״ט: 1004</span></div>
                   </div>
                 </td>
-                <td data-label="מחיר יח׳"><input type="number" class="price-input" data-row="3" min="0" placeholder="₪"></td>
+                <td data-label="מחיר יח׳"><input type="number" class="price-input" data-row="3" min="0" value="2288" placeholder="₪"></td>
                 <td data-label="כמות"><input type="number" class="qty-input" data-row="3" min="0" value="0"></td>
                 <td data-label="סה״כ"><span class="line-total" data-total="3">₪ 0</span></td>
               </tr>
-              <tr>
+              <tr data-sku="1005">
                 <td data-label="">
                   <div class="product-name-cell">
-                    <div class="product-icon">🗄️</div>
-                    <span class="product-name-text">ארונות עם אינדוקציה</span>
+                    <div class="product-icon">🌀</div>
+                    <div><span class="product-name-text">מאוורר</span><span class="product-sku">מק״ט: 1005</span></div>
                   </div>
                 </td>
                 <td data-label="מחיר יח׳"><input type="number" class="price-input" data-row="4" min="0" placeholder="₪"></td>
@@ -1894,25 +1902,47 @@ input[type="date"] {
               <tr>
                 <td data-label="">
                   <div class="product-name-cell">
+                    <div class="product-icon">🗄️</div>
+                    <div><span class="product-name-text">ארונות עם אינדוקציה</span></div>
+                  </div>
+                </td>
+                <td data-label="מחיר יח׳"><input type="number" class="price-input" data-row="5" min="0" placeholder="₪"></td>
+                <td data-label="כמות"><input type="number" class="qty-input" data-row="5" min="0" value="0"></td>
+                <td data-label="סה״כ"><span class="line-total" data-total="5">₪ 0</span></td>
+              </tr>
+              <tr data-sku="1008">
+                <td data-label="">
+                  <div class="product-name-cell">
+                    <div class="product-icon">💡</div>
+                    <div><span class="product-name-text">מקרן ריצפתי</span><span class="product-sku">מק״ט: 1008</span></div>
+                  </div>
+                </td>
+                <td data-label="מחיר יח׳"><input type="number" class="price-input" data-row="6" min="0" placeholder="₪"></td>
+                <td data-label="כמות"><input type="number" class="qty-input" data-row="6" min="0" value="0"></td>
+                <td data-label="סה״כ"><span class="line-total" data-total="6">₪ 0</span></td>
+              </tr>
+              <tr data-sku="1006">
+                <td data-label="">
+                  <div class="product-name-cell">
                     <div class="product-icon">🕯️</div>
-                    <span class="product-name-text">מתאמים פלטת שבת</span>
+                    <div><span class="product-name-text">מתאם לפלטת שבת</span><span class="product-sku">מק״ט: 1006</span></div>
                     <span class="free-tag">✓ ללא עלות</span>
                   </div>
                 </td>
                 <td data-label="מחיר יח׳"><span class="price-display" style="opacity:0.4">₪ 0</span></td>
-                <td data-label="כמות"><input type="number" class="qty-input" data-row="5" data-free="true" min="0" value="0"></td>
+                <td data-label="כמות"><input type="number" class="qty-input" data-row="7" data-free="true" min="0" value="0"></td>
                 <td data-label="סה״כ"><span class="line-total">₪ 0</span></td>
               </tr>
-              <tr>
+              <tr data-sku="1007">
                 <td data-label="">
                   <div class="product-name-cell">
                     <div class="product-icon">🍳</div>
-                    <span class="product-name-text">מתאמים בישול בשמן עמוק</span>
+                    <div><span class="product-name-text">מתאם לבישול בשמן עמוק</span><span class="product-sku">מק״ט: 1007</span></div>
                     <span class="free-tag">✓ ללא עלות</span>
                   </div>
                 </td>
                 <td data-label="מחיר יח׳"><span class="price-display" style="opacity:0.4">₪ 0</span></td>
-                <td data-label="כמות"><input type="number" class="qty-input" data-row="6" data-free="true" min="0" value="0"></td>
+                <td data-label="כמות"><input type="number" class="qty-input" data-row="8" data-free="true" min="0" value="0"></td>
                 <td data-label="סה״כ"><span class="line-total">₪ 0</span></td>
               </tr>
             </tbody>
@@ -2240,16 +2270,17 @@ function handleSubmit(e) {
 
   // Collect products
   const products = [];
-  const productNames = ['נקודת אינדוקציה קוטר 18', 'נקודת אינדוקציה קוטר 24', 'נקודת אינדוקציה קוטר 28', 'בקר BT', 'ארונות עם אינדוקציה', 'מתאמים פלטת שבת', 'מתאמים בישול בשמן עמוק'];
-  document.querySelectorAll('.product-table tbody tr').forEach((row, i) => {
+  document.querySelectorAll('.product-table tbody tr').forEach(row => {
     const qtyInput = row.querySelector('.qty-input');
     const priceInput = row.querySelector('.price-input');
+    const nameEl = row.querySelector('.product-name-text');
     const qty = parseInt(qtyInput?.value) || 0;
     if (qty > 0) {
       const isFree = qtyInput.dataset.free === 'true';
       const price = priceInput ? (parseFloat(priceInput.value) || 0) : 0;
       products.push({
-        name: productNames[i] || '',
+        sku: row.dataset.sku || '',
+        name: nameEl?.textContent || '',
         price: price,
         qty: qty,
         total: isFree ? 0 : price * qty
