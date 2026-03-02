@@ -2322,10 +2322,16 @@ function handleSubmit(e) {
   })
   .then(res => {
     if (!res.ok) throw new Error('Network response was not ok');
-    return res.json();
+    return res.text();
   })
-  .then(result => {
-    const orderNum = result.orderNumber || result.ORDNAME || result.orderId || '';
+  .then(text => {
+    let orderNum = '';
+    try {
+      const result = JSON.parse(text);
+      orderNum = result.orderNumber || result.ORDNAME || result.orderId || '';
+    } catch(e) {
+      orderNum = text.trim();
+    }
     document.getElementById('orderNumber').textContent = orderNum;
     document.getElementById('successModal').classList.add('active');
   })
