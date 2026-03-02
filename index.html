@@ -2280,11 +2280,8 @@ function handleSubmit(e) {
       const isFree = qtyInput.dataset.free === 'true';
       const price = priceInput ? (parseFloat(priceInput.value) || 0) : 0;
       products.push({
-        sku: row.dataset.sku || '',
-        name: nameEl?.textContent || '',
-        price: price,
-        qty: qty,
-        total: isFree ? 0 : price * qty
+        PARTNAME: row.dataset.sku || '',
+        TQUANT: qty
       });
     }
   });
