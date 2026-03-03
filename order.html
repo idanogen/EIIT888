@@ -1819,7 +1819,9 @@ input[type="date"] {
 
 @media (max-width: 768px) {
   .header { padding: 10px 16px; }
-  .header-actions { display: none; }
+  .header-actions { gap: 8px; }
+  .header-actions .agent-name { display: none; }
+  .header-actions .header-phone { display: none; }
   .hero { padding: 90px 20px 40px; min-height: auto; }
   .hero h1 { font-size: 28px; }
   .hero-sub { font-size: 15px; margin-bottom: 24px; }
@@ -2017,6 +2019,7 @@ input[type="date"] {
   .admin-link { font-size: 11px; padding: 6px 10px; }
 }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
@@ -2581,13 +2584,22 @@ if (currentAgent) {
   // Show agent name in header
   document.getElementById('agentNameDisplay').textContent = currentAgent.displayName || currentAgent.username;
 
+  // Show history link
+  const historyLink = document.createElement('a');
+  historyLink.href = 'history.html';
+  historyLink.className = 'admin-link';
+  historyLink.style.borderColor = 'rgba(80,58,168,0.2)';
+  historyLink.style.color = 'var(--purple)';
+  historyLink.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> היסטוריה';
+  const headerActions = document.querySelector('.header-actions');
+  headerActions.insertBefore(historyLink, headerActions.firstChild);
+
   // Show admin link if admin
   if (currentAgent.role === 'admin') {
     const adminLink = document.createElement('a');
     adminLink.href = 'admin.html';
     adminLink.className = 'admin-link';
     adminLink.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg> ניהול';
-    const headerActions = document.querySelector('.header-actions');
     headerActions.insertBefore(adminLink, headerActions.firstChild);
   }
 }
@@ -2595,6 +2607,64 @@ if (currentAgent) {
 function logout() {
   localStorage.removeItem('eiit_agent');
   window.location.href = 'index.html';
+}
+
+/* ═══════ SUPABASE CONFIG ═══════ */
+const SUPABASE_URL = 'https://tmuijibbpwkfjmkgbddb.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRtdWlqaWJicHdrZmpta2diZGRiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1MzY5NjksImV4cCI6MjA4ODExMjk2OX0.Efq5LJYUf3Cpj01GMR_Wr9ZHn4T2bMuhi55IPnE16wM';
+let db;
+try {
+  db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+} catch(e) {
+  console.error('Supabase init error:', e);
+}
+
+function saveOrderToSupabase(data, orderNum) {
+  if (!db) return;
+  const productsDetailed = [];
+  document.querySelectorAll('.product-table tbody tr').forEach(row => {
+    const qtyInput = row.querySelector('.qty-input');
+    const qty = parseInt(qtyInput?.value) || 0;
+    if (qty > 0) {
+      const priceInput = row.querySelector('.price-input');
+      const nameEl = row.querySelector('.product-name-text');
+      productsDetailed.push({
+        sku: row.dataset.sku || '',
+        name: nameEl ? nameEl.textContent.trim() : '',
+        price: priceInput ? (parseFloat(priceInput.value) || 0) : 0,
+        qty: qty,
+        total: (priceInput ? (parseFloat(priceInput.value) || 0) : 0) * qty
+      });
+    }
+  });
+  db.from('orders').insert({
+    order_number: orderNum,
+    order_date: data.date,
+    branch: data.branch,
+    handler: data.handler,
+    agent_id: data.agentId,
+    agent_name: data.agentName,
+    agent_username: currentAgent ? currentAgent.username : '',
+    customer_name: data.customerName,
+    customer_id: data.customerId,
+    phone: data.phone,
+    email: data.email,
+    street: data.street,
+    city: data.city,
+    floor: data.floor,
+    install_date: data.installDate || null,
+    stone_color: data.stoneColor,
+    products: productsDetailed,
+    subtotal: data.subtotal,
+    vat: data.vat,
+    grand_total: data.grandTotal,
+    advance: data.advance,
+    notes: data.notes,
+    status: 'new'
+  }).then(({ error }) => {
+    if (error) console.error('Supabase save error:', error);
+    else console.log('Order saved to Supabase');
+  });
 }
 
 /* ═══════ AUTO DATE ═══════ */
@@ -2816,6 +2886,9 @@ function handleSubmit(e) {
     }
     orderNum = orderNum.replace(/^מספר הזמנה\s*/i, '').trim();
     document.getElementById('orderNumber').textContent = orderNum;
+
+    // Save to Supabase (fire-and-forget)
+    saveOrderToSupabase(data, orderNum);
 
     // Complete all steps and show success after delay
     setTimeout(() => {
