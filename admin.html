@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>אינדוקציה כהלכה 888 | ניהול משתמשים</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=Rubik:wght@300;400;500;600;700;800;900&family=Noto+Serif+Hebrew:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --purple: #503AA8;
+  --purple-deep: #3B2884;
+  --purple-light: #7B65D4;
+  --purple-mist: #EDE8F8;
+  --purple-ghost: #F6F3FC;
+  --gold: #C9A84C;
+  --gold-light: #E8D48B;
+  --gold-pale: #FBF6E8;
+  --cream: #FDFBF7;
+  --cream-dark: #F5F0E8;
+  --warm-white: #FEFDFB;
+  --marble-1: #F8F5F0;
+  --marble-2: #EDE8E0;
+  --text-primary: #1A1432;
+  --text-secondary: #4A4560;
+  --text-muted: #8C87A0;
+  --text-faint: #B5B0C5;
+  --border: #E8E4F0;
+  --border-light: #F0ECF5;
+  --green: #2D9F46;
+  --green-bg: #E8F7EC;
+  --red: #D94040;
+  --radius: 14px;
+  --radius-lg: 24px;
+  --shadow: 0 4px 20px rgba(80,58,168,0.08);
+  --shadow-lg: 0 12px 40px rgba(80,58,168,0.10);
+  --shadow-xl: 0 20px 60px rgba(80,58,168,0.12);
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-smooth: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: 'Heebo', sans-serif;
+  background: var(--cream);
+  color: var(--text-primary);
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+.deco-grid {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.018;
+  background-image:
+    linear-gradient(var(--purple) 1px, transparent 1px),
+    linear-gradient(90deg, var(--purple) 1px, transparent 1px);
+  background-size: 80px 80px;
+}
+
+.orb {
+  position: fixed;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  filter: blur(80px);
+  animation: orbFloat 20s ease-in-out infinite;
+}
+.orb-1 {
+  width: 500px; height: 500px;
+  background: rgba(80, 58, 168, 0.06);
+  top: -100px; right: -100px;
+}
+.orb-2 {
+  width: 400px; height: 400px;
+  background: rgba(201, 168, 76, 0.05);
+  bottom: 20%; left: -80px;
+  animation-delay: -7s;
+}
+
+@keyframes orbFloat {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -40px) scale(1.05); }
+  66% { transform: translate(-20px, 30px) scale(0.95); }
+}
+
+/* ═══════ HEADER ═══════ */
+.header {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  padding: 16px 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(253, 251, 247, 0.95);
+  backdrop-filter: blur(24px) saturate(1.4);
+  -webkit-backdrop-filter: blur(24px) saturate(1.4);
+  border-bottom: 1px solid rgba(80, 58, 168, 0.06);
+  box-shadow: 0 4px 30px rgba(80, 58, 168, 0.06);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  text-decoration: none;
+}
+
+.logo-mark {
+  position: relative;
+  width: 44px;
+  height: 44px;
+}
+
+.logo-mark .ring {
+  position: absolute;
+  inset: 0;
+  border: 2px solid var(--purple);
+  border-radius: 12px;
+}
+
+.logo-mark .ring-inner {
+  position: absolute;
+  inset: 4px;
+  border: 1.5px solid var(--gold);
+  border-radius: 9px;
+}
+
+.logo-mark .num {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Noto Serif Hebrew', serif;
+  font-size: 15px;
+  font-weight: 900;
+  color: var(--purple);
+}
+
+.logo-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.logo-text .brand {
+  font-family: 'Noto Serif Hebrew', serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.logo-text .tagline {
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--gold);
+  font-weight: 600;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.agent-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--purple);
+  padding: 6px 16px;
+  background: var(--purple-ghost);
+  border-radius: 100px;
+  border: 1px solid rgba(80,58,168,0.1);
+}
+
+.header-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 8px 16px;
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  text-decoration: none;
+  transition: all 0.3s var(--ease);
+}
+
+.header-link:hover {
+  border-color: var(--purple);
+  color: var(--purple);
+  background: var(--purple-ghost);
+}
+
+.logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-muted);
+  font-family: 'Heebo', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 8px 16px;
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.3s var(--ease);
+}
+
+.logout-btn:hover {
+  border-color: var(--red);
+  color: var(--red);
+  background: #FEF2F2;
+}
+
+/* ═══════ MAIN CONTENT ═══════ */
+.main {
+  position: relative;
+  z-index: 1;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 100px 24px 60px;
+}
+
+.page-title {
+  font-family: 'Noto Serif Hebrew', serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.page-subtitle {
+  font-size: 15px;
+  color: var(--text-muted);
+  margin-bottom: 32px;
+}
+
+/* ═══════ ACTION BAR ═══════ */
+.action-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.add-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 28px;
+  background: var(--purple);
+  color: white;
+  border: none;
+  border-radius: var(--radius);
+  font-family: 'Heebo', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s var(--ease);
+  box-shadow: 0 6px 24px rgba(80,58,168,0.2);
+}
+
+.add-btn:hover {
+  background: var(--purple-deep);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 32px rgba(80,58,168,0.25);
+}
+
+.add-btn svg { width: 18px; height: 18px; }
+
+.user-count {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+/* ═══════ USERS TABLE ═══════ */
+.users-card {
+  background: white;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.users-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.users-table thead {
+  background: linear-gradient(135deg, var(--purple-ghost), rgba(201,168,76,0.04));
+}
+
+.users-table thead th {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--purple);
+  letter-spacing: 0.5px;
+  padding: 14px 20px;
+  text-align: right;
+  border-bottom: 2px solid var(--border);
+  white-space: nowrap;
+}
+
+.users-table tbody tr {
+  transition: all 0.3s var(--ease);
+  border-bottom: 1px solid var(--border-light);
+}
+
+.users-table tbody tr:last-child { border-bottom: none; }
+
+.users-table tbody tr:hover {
+  background: linear-gradient(135deg, rgba(80,58,168,0.02), rgba(201,168,76,0.02));
+}
+
+.users-table tbody td {
+  padding: 14px 20px;
+  font-size: 14px;
+  vertical-align: middle;
+}
+
+.role-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 100px;
+}
+
+.role-badge.admin {
+  background: var(--gold-pale);
+  color: var(--gold);
+  border: 1px solid rgba(201,168,76,0.3);
+}
+
+.role-badge.agent {
+  background: var(--purple-ghost);
+  color: var(--purple);
+  border: 1px solid rgba(80,58,168,0.15);
+}
+
+.action-btns {
+  display: flex;
+  gap: 8px;
+}
+
+.edit-btn, .delete-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.3s var(--ease);
+}
+
+.edit-btn svg, .delete-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.edit-btn { color: var(--purple); }
+.edit-btn:hover {
+  background: var(--purple-ghost);
+  border-color: var(--purple);
+}
+
+.delete-btn { color: var(--text-muted); }
+.delete-btn:hover {
+  background: #FEF2F2;
+  border-color: var(--red);
+  color: var(--red);
+}
+
+/* Loading state */
+.loading {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-muted);
+  font-size: 15px;
+}
+
+.loading svg {
+  width: 32px;
+  height: 32px;
+  color: var(--purple);
+  animation: spin 1s linear infinite;
+  margin-bottom: 12px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-muted);
+  font-size: 15px;
+}
+
+/* ═══════ MODAL ═══════ */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(26, 20, 50, 0.5);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 200;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.modal-overlay.active {
+  display: flex;
+}
+
+.modal {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: 40px;
+  max-width: 520px;
+  width: 100%;
+  box-shadow: var(--shadow-xl);
+  position: relative;
+  animation: modalIn 0.3s var(--ease-smooth);
+}
+
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(0.95) translateY(10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.modal::before {
+  content: '';
+  position: absolute;
+  top: 0; right: 0; left: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--purple), var(--gold), var(--purple));
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+.modal-title {
+  font-family: 'Noto Serif Hebrew', serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 24px;
+}
+
+.modal .field {
+  margin-bottom: 18px;
+}
+
+.modal .field label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+
+.modal .field input,
+.modal .field select {
+  width: 100%;
+  padding: 12px 16px;
+  background: var(--marble-1);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  color: var(--text-primary);
+  font-family: 'Heebo', sans-serif;
+  font-size: 14px;
+  transition: all 0.3s var(--ease);
+  outline: none;
+}
+
+.modal .field input::placeholder {
+  color: var(--text-faint);
+  font-weight: 300;
+}
+
+.modal .field input:focus,
+.modal .field select:focus {
+  border-color: var(--purple);
+  background: white;
+  box-shadow: 0 0 0 4px rgba(80,58,168,0.08);
+}
+
+.modal .field select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' fill='%23503AA8' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 16px center;
+  padding-left: 40px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.modal-save {
+  flex: 1;
+  padding: 14px;
+  background: var(--purple);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-family: 'Heebo', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s var(--ease);
+  box-shadow: 0 6px 24px rgba(80,58,168,0.2);
+}
+
+.modal-save:hover {
+  background: var(--purple-deep);
+  transform: translateY(-1px);
+}
+
+.modal-save:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.modal-cancel {
+  padding: 14px 28px;
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  font-family: 'Heebo', sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s var(--ease);
+}
+
+.modal-cancel:hover {
+  border-color: var(--text-muted);
+  background: var(--marble-1);
+}
+
+/* Confirm delete modal */
+.confirm-text {
+  font-size: 15px;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+  line-height: 1.8;
+}
+
+.confirm-name {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.modal-delete {
+  flex: 1;
+  padding: 14px;
+  background: var(--red);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-family: 'Heebo', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s var(--ease);
+}
+
+.modal-delete:hover {
+  background: #C53030;
+  transform: translateY(-1px);
+}
+
+/* Toast notification */
+.toast {
+  position: fixed;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  padding: 14px 28px;
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: 600;
+  z-index: 300;
+  transition: transform 0.4s var(--ease-bounce);
+  box-shadow: var(--shadow-lg);
+}
+
+.toast.visible {
+  transform: translateX(-50%) translateY(0);
+}
+
+.toast.success {
+  background: var(--green-bg);
+  color: var(--green);
+  border: 1px solid rgba(45,159,70,0.2);
+}
+
+.toast.error {
+  background: #FEF2F2;
+  color: var(--red);
+  border: 1px solid #FECACA;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+@media (max-width: 768px) {
+  .header { padding: 12px 16px; }
+  .main { padding: 80px 16px 40px; }
+  .page-title { font-size: 22px; }
+  .action-bar { flex-direction: column; gap: 12px; align-items: stretch; }
+  .add-btn { justify-content: center; }
+  .users-table thead { display: none; }
+  .users-table, .users-table tbody, .users-table tr, .users-table td {
+    display: block;
+    width: 100%;
+  }
+  .users-table tbody tr {
+    padding: 16px;
+    margin-bottom: 12px;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius);
+  }
+  .users-table tbody td {
+    padding: 6px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .users-table tbody td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+  .modal { padding: 28px 20px; }
+  .agent-name { font-size: 11px; padding: 4px 10px; }
+}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+<div class="deco-grid"></div>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+
+<!-- ═══════ HEADER ═══════ -->
+<header class="header">
+  <a href="order.html" class="logo">
+    <div class="logo-mark">
+      <div class="ring"></div>
+      <div class="ring-inner"></div>
+      <div class="num">888</div>
+    </div>
+    <div class="logo-text">
+      <span class="brand">אינדוקציה כהלכה</span>
+      <span class="tagline">EIIT 888 LTD</span>
+    </div>
+  </a>
+  <div class="header-actions">
+    <span class="agent-name" id="agentNameDisplay"></span>
+    <a href="order.html" class="header-link">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+      טופס הזמנה
+    </a>
+    <button class="logout-btn" onclick="logout()">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+      התנתק
+    </button>
+  </div>
+</header>
+
+<!-- ═══════ MAIN CONTENT ═══════ -->
+<main class="main">
+  <h1 class="page-title">ניהול משתמשים</h1>
+  <p class="page-subtitle">הוספה, עריכה ומחיקה של סוכני מכירות במערכת</p>
+
+  <div class="action-bar">
+    <button class="add-btn" onclick="openModal()">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+      הוספת משתמש חדש
+    </button>
+    <span class="user-count" id="userCount"></span>
+  </div>
+
+  <div class="users-card">
+    <div id="usersContent">
+      <div class="loading">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+        טוען משתמשים...
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- ═══════ USER MODAL (Create/Edit) ═══════ -->
+<div class="modal-overlay" id="userModal">
+  <div class="modal">
+    <h3 class="modal-title" id="modalTitle">הוספת משתמש חדש</h3>
+    <form id="userForm" onsubmit="saveUser(event)">
+      <input type="hidden" id="editUserId" value="">
+      <div class="field">
+        <label>שם תצוגה</label>
+        <input type="text" id="userDisplayName" placeholder="שם מלא" required>
+      </div>
+      <div class="field">
+        <label>שם משתמש</label>
+        <input type="text" id="userUsername" placeholder="שם משתמש להתחברות" required autocomplete="off">
+      </div>
+      <div class="field">
+        <label id="passwordLabel">סיסמה</label>
+        <input type="password" id="userPassword" placeholder="סיסמה" required autocomplete="new-password">
+      </div>
+      <div class="field">
+        <label>סוכן פריורטי</label>
+        <select id="userPriorityAgent" required>
+          <option value="">בחר סוכן</option>
+          <option value="agent1">סוכן 1</option>
+          <option value="agent2">סוכן 2</option>
+          <option value="agent3">סוכן 3</option>
+          <option value="agent4">סוכן 4</option>
+          <option value="agent5">סוכן 5</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>תפקיד</label>
+        <select id="userRole" required>
+          <option value="agent">סוכן</option>
+          <option value="admin">מנהל</option>
+        </select>
+      </div>
+      <div class="modal-actions">
+        <button type="submit" class="modal-save" id="saveBtn">שמור</button>
+        <button type="button" class="modal-cancel" onclick="closeUserModal()">ביטול</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ═══════ DELETE CONFIRM MODAL ═══════ -->
+<div class="modal-overlay" id="deleteModal">
+  <div class="modal">
+    <h3 class="modal-title">מחיקת משתמש</h3>
+    <p class="confirm-text">האם אתה בטוח שברצונך למחוק את המשתמש <span class="confirm-name" id="deleteUserName"></span>?</p>
+    <p class="confirm-text" style="font-size: 13px; color: var(--text-muted);">פעולה זו אינה ניתנת לביטול.</p>
+    <input type="hidden" id="deleteUserId" value="">
+    <div class="modal-actions">
+      <button type="button" class="modal-delete" onclick="confirmDelete()">מחק משתמש</button>
+      <button type="button" class="modal-cancel" onclick="closeDeleteModal()">ביטול</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ TOAST ═══════ -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ═══════ AUTH CHECK ═══════ */
+let currentAgent = null;
+try {
+  const stored = localStorage.getItem('eiit_agent');
+  if (stored) currentAgent = JSON.parse(stored);
+} catch(e) {}
+
+// Must be logged in AND be admin
+if (!currentAgent || !currentAgent.username) {
+  window.location.href = 'index.html';
+} else if (currentAgent.role !== 'admin') {
+  window.location.href = 'order.html';
+}
+
+// Display admin name
+document.getElementById('agentNameDisplay').textContent = currentAgent.displayName || currentAgent.username;
+
+function logout() {
+  localStorage.removeItem('eiit_agent');
+  window.location.href = 'index.html';
+}
+
+/* ═══════ SUPABASE CONFIG ═══════ */
+// Update these after creating your Supabase project
+const SUPABASE_URL = 'https://tmuijibbpwkfjmkgbddb.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRtdWlqaWJicHdrZmpta2diZGRiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1MzY5NjksImV4cCI6MjA4ODExMjk2OX0.Efq5LJYUf3Cpj01GMR_Wr9ZHn4T2bMuhi55IPnE16wM';
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+/* Priority agents mapping */
+const PRIORITY_AGENTS = {
+  'agent1': { id: 'agent1', name: 'סוכן 1' },
+  'agent2': { id: 'agent2', name: 'סוכן 2' },
+  'agent3': { id: 'agent3', name: 'סוכן 3' },
+  'agent4': { id: 'agent4', name: 'סוכן 4' },
+  'agent5': { id: 'agent5', name: 'סוכן 5' }
+};
+
+let users = [];
+
+/* ═══════ LOAD USERS ═══════ */
+async function loadUsers() {
+  const container = document.getElementById('usersContent');
+  container.innerHTML = '<div class="loading"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>טוען משתמשים...</div>';
+
+  try {
+    const { data, error } = await supabase
+      .from('agents')
+      .select('*')
+      .order('created_at', { ascending: true });
+
+    if (error) throw error;
+
+    users = (data || []).map(u => ({
+      id: u.id,
+      username: u.username,
+      displayName: u.display_name,
+      priorityAgentId: u.priority_agent_id,
+      priorityAgentName: u.priority_agent_name,
+      role: u.role
+    }));
+    renderUsers();
+  } catch (err) {
+    console.error('Error loading users:', err);
+    container.innerHTML = '<div class="empty-state">שגיאה בטעינת משתמשים. ודאו שהגדרות Supabase נכונות.</div>';
+  }
+}
+
+function renderUsers() {
+  const container = document.getElementById('usersContent');
+  const countEl = document.getElementById('userCount');
+
+  if (users.length === 0) {
+    container.innerHTML = '<div class="empty-state">אין משתמשים במערכת. לחצו על "הוספת משתמש חדש" כדי להתחיל.</div>';
+    countEl.textContent = '';
+    return;
+  }
+
+  countEl.textContent = users.length + ' משתמשים';
+
+  let html = '<table class="users-table"><thead><tr>';
+  html += '<th>שם תצוגה</th>';
+  html += '<th>שם משתמש</th>';
+  html += '<th>סוכן פריורטי</th>';
+  html += '<th>תפקיד</th>';
+  html += '<th>פעולות</th>';
+  html += '</tr></thead><tbody>';
+
+  users.forEach((user, idx) => {
+    const roleClass = user.role === 'admin' ? 'admin' : 'agent';
+    const roleText = user.role === 'admin' ? 'מנהל' : 'סוכן';
+    html += '<tr>';
+    html += '<td data-label="שם תצוגה"><strong>' + escapeHtml(user.displayName || '') + '</strong></td>';
+    html += '<td data-label="שם משתמש">' + escapeHtml(user.username || '') + '</td>';
+    html += '<td data-label="סוכן פריורטי">' + escapeHtml(user.priorityAgentName || '-') + '</td>';
+    html += '<td data-label="תפקיד"><span class="role-badge ' + roleClass + '">' + roleText + '</span></td>';
+    html += '<td data-label="פעולות"><div class="action-btns">';
+    html += '<button class="edit-btn" onclick="editUser(' + idx + ')" title="עריכה"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></button>';
+    html += '<button class="delete-btn" onclick="deleteUser(' + idx + ')" title="מחיקה"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>';
+    html += '</div></td>';
+    html += '</tr>';
+  });
+
+  html += '</tbody></table>';
+  container.innerHTML = html;
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+/* ═══════ MODAL HANDLERS ═══════ */
+function openModal(editIdx) {
+  const modal = document.getElementById('userModal');
+  const title = document.getElementById('modalTitle');
+  const form = document.getElementById('userForm');
+  const passwordInput = document.getElementById('userPassword');
+  const passwordLabel = document.getElementById('passwordLabel');
+
+  form.reset();
+  document.getElementById('editUserId').value = '';
+
+  if (editIdx !== undefined && users[editIdx]) {
+    const user = users[editIdx];
+    title.textContent = 'עריכת משתמש';
+    document.getElementById('editUserId').value = user.id;
+    document.getElementById('userDisplayName').value = user.displayName || '';
+    document.getElementById('userUsername').value = user.username || '';
+    document.getElementById('userPriorityAgent').value = user.priorityAgentId || '';
+    document.getElementById('userRole').value = user.role || 'agent';
+    // Password not required on edit
+    passwordInput.required = false;
+    passwordInput.placeholder = 'השאר ריק לשמירת הסיסמה הקיימת';
+    passwordLabel.textContent = 'סיסמה (אופציונלי)';
+  } else {
+    title.textContent = 'הוספת משתמש חדש';
+    passwordInput.required = true;
+    passwordInput.placeholder = 'סיסמה';
+    passwordLabel.textContent = 'סיסמה';
+  }
+
+  modal.classList.add('active');
+}
+
+function closeUserModal() {
+  document.getElementById('userModal').classList.remove('active');
+}
+
+function editUser(idx) {
+  openModal(idx);
+}
+
+function deleteUser(idx) {
+  const user = users[idx];
+  document.getElementById('deleteUserName').textContent = user.displayName || user.username;
+  document.getElementById('deleteUserId').value = user.id;
+  document.getElementById('deleteModal').classList.add('active');
+}
+
+function closeDeleteModal() {
+  document.getElementById('deleteModal').classList.remove('active');
+}
+
+/* ═══════ SAVE USER ═══════ */
+async function saveUser(e) {
+  e.preventDefault();
+  const btn = document.getElementById('saveBtn');
+  btn.disabled = true;
+  btn.textContent = 'שומר...';
+
+  const editId = document.getElementById('editUserId').value;
+  const isEdit = !!editId;
+  const agentKey = document.getElementById('userPriorityAgent').value;
+  const agent = PRIORITY_AGENTS[agentKey] || { id: agentKey, name: agentKey };
+
+  const userData = {
+    display_name: document.getElementById('userDisplayName').value.trim(),
+    username: document.getElementById('userUsername').value.trim(),
+    priority_agent_id: agent.id,
+    priority_agent_name: agent.name,
+    role: document.getElementById('userRole').value
+  };
+
+  const password = document.getElementById('userPassword').value;
+  if (password) {
+    userData.password = password;
+  }
+
+  try {
+    let result;
+    if (isEdit) {
+      result = await supabase
+        .from('agents')
+        .update(userData)
+        .eq('id', editId);
+    } else {
+      userData.password = password;
+      result = await supabase
+        .from('agents')
+        .insert(userData);
+    }
+
+    if (result.error) throw result.error;
+
+    closeUserModal();
+    showToast(isEdit ? 'המשתמש עודכן בהצלחה' : 'המשתמש נוצר בהצלחה', 'success');
+    loadUsers();
+  } catch (err) {
+    console.error('Error saving user:', err);
+    showToast('שגיאה בשמירת המשתמש', 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'שמור';
+  }
+}
+
+/* ═══════ DELETE USER ═══════ */
+async function confirmDelete() {
+  const userId = document.getElementById('deleteUserId').value;
+
+  try {
+    const { error } = await supabase
+      .from('agents')
+      .delete()
+      .eq('id', userId);
+
+    if (error) throw error;
+
+    closeDeleteModal();
+    showToast('המשתמש נמחק בהצלחה', 'success');
+    loadUsers();
+  } catch (err) {
+    console.error('Error deleting user:', err);
+    showToast('שגיאה במחיקת המשתמש', 'error');
+  }
+}
+
+/* ═══════ TOAST ═══════ */
+function showToast(msg, type) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.className = 'toast ' + type + ' visible';
+  setTimeout(() => {
+    toast.classList.remove('visible');
+  }, 3000);
+}
+
+/* ═══════ CLOSE MODALS ON OVERLAY CLICK ═══════ */
+document.getElementById('userModal').addEventListener('click', e => {
+  if (e.target === e.currentTarget) closeUserModal();
+});
+document.getElementById('deleteModal').addEventListener('click', e => {
+  if (e.target === e.currentTarget) closeDeleteModal();
+});
+
+/* ═══════ INIT ═══════ */
+loadUsers();
+</script>
+</body>
+</html>
