@@ -818,12 +818,6 @@ async function loadPriorityAgents() {
 
     if (error) throw error;
     priorityAgents = data || [];
-
-    const select = document.getElementById('userPriorityAgent');
-    select.innerHTML = '<option value="">בחר סוכן</option>';
-    priorityAgents.forEach(a => {
-      select.innerHTML += '<option value="' + a.id + '">' + a.name + '</option>';
-    });
   } catch (err) {
     console.error('Error loading priority agents:', err);
   }
@@ -915,6 +909,21 @@ function openModal(editIdx) {
   form.reset();
   document.getElementById('editUserId').value = '';
 
+  // Get IDs of agents already assigned to users
+  const currentEditId = (editIdx !== undefined && users[editIdx]) ? users[editIdx].priorityAgentId : null;
+  const usedAgentIds = users.map(u => u.priorityAgentId).filter(Boolean);
+
+  // Populate dropdown with available agents only
+  const select = document.getElementById('userPriorityAgent');
+  select.innerHTML = '<option value="">בחר סוכן</option>';
+  priorityAgents.forEach(a => {
+    const isUsed = usedAgentIds.includes(a.id);
+    const isCurrentUser = a.id === currentEditId;
+    if (!isUsed || isCurrentUser) {
+      select.innerHTML += '<option value="' + a.id + '">' + a.name + '</option>';
+    }
+  });
+
   if (editIdx !== undefined && users[editIdx]) {
     const user = users[editIdx];
     title.textContent = 'עריכת משתמש';
@@ -923,7 +932,6 @@ function openModal(editIdx) {
     document.getElementById('userUsername').value = user.username || '';
     document.getElementById('userPriorityAgent').value = user.priorityAgentId || '';
     document.getElementById('userRole').value = user.role || 'agent';
-    // Password not required on edit
     passwordInput.required = false;
     passwordInput.placeholder = 'השאר ריק לשמירת הסיסמה הקיימת';
     passwordLabel.textContent = 'סיסמה (אופציונלי)';
