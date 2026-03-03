@@ -742,12 +742,7 @@ body {
       <div class="field">
         <label>סוכן פריורטי</label>
         <select id="userPriorityAgent" required>
-          <option value="">בחר סוכן</option>
-          <option value="agent1">סוכן 1</option>
-          <option value="agent2">סוכן 2</option>
-          <option value="agent3">סוכן 3</option>
-          <option value="agent4">סוכן 4</option>
-          <option value="agent5">סוכן 5</option>
+          <option value="">טוען סוכנים...</option>
         </select>
       </div>
       <div class="field">
@@ -811,14 +806,28 @@ const SUPABASE_URL = 'https://tmuijibbpwkfjmkgbddb.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRtdWlqaWJicHdrZmpta2diZGRiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1MzY5NjksImV4cCI6MjA4ODExMjk2OX0.Efq5LJYUf3Cpj01GMR_Wr9ZHn4T2bMuhi55IPnE16wM';
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-/* Priority agents mapping */
-const PRIORITY_AGENTS = {
-  'agent1': { id: 'agent1', name: 'סוכן 1' },
-  'agent2': { id: 'agent2', name: 'סוכן 2' },
-  'agent3': { id: 'agent3', name: 'סוכן 3' },
-  'agent4': { id: 'agent4', name: 'סוכן 4' },
-  'agent5': { id: 'agent5', name: 'סוכן 5' }
-};
+/* Priority agents - loaded from Supabase */
+let priorityAgents = [];
+
+async function loadPriorityAgents() {
+  try {
+    const { data, error } = await db
+      .from('priority_agents')
+      .select('*')
+      .order('name');
+
+    if (error) throw error;
+    priorityAgents = data || [];
+
+    const select = document.getElementById('userPriorityAgent');
+    select.innerHTML = '<option value="">בחר סוכן</option>';
+    priorityAgents.forEach(a => {
+      select.innerHTML += '<option value="' + a.id + '">' + a.name + '</option>';
+    });
+  } catch (err) {
+    console.error('Error loading priority agents:', err);
+  }
+}
 
 let users = [];
 
@@ -956,14 +965,14 @@ async function saveUser(e) {
 
   const editId = document.getElementById('editUserId').value;
   const isEdit = !!editId;
-  const agentKey = document.getElementById('userPriorityAgent').value;
-  const agent = PRIORITY_AGENTS[agentKey] || { id: agentKey, name: agentKey };
+  const agentId = document.getElementById('userPriorityAgent').value;
+  const agent = priorityAgents.find(a => a.id === agentId);
 
   const userData = {
     display_name: document.getElementById('userDisplayName').value.trim(),
     username: document.getElementById('userUsername').value.trim(),
-    priority_agent_id: agent.id,
-    priority_agent_name: agent.name,
+    priority_agent_id: agentId,
+    priority_agent_name: agent ? agent.name : agentId,
     role: document.getElementById('userRole').value
   };
 
@@ -1040,6 +1049,7 @@ document.getElementById('deleteModal').addEventListener('click', e => {
 });
 
 /* ═══════ INIT ═══════ */
+loadPriorityAgents();
 loadUsers();
 </script>
 </body>
