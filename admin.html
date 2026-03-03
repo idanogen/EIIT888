@@ -809,7 +809,7 @@ function logout() {
 // Update these after creating your Supabase project
 const SUPABASE_URL = 'https://tmuijibbpwkfjmkgbddb.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRtdWlqaWJicHdrZmpta2diZGRiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1MzY5NjksImV4cCI6MjA4ODExMjk2OX0.Efq5LJYUf3Cpj01GMR_Wr9ZHn4T2bMuhi55IPnE16wM';
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 /* Priority agents mapping */
 const PRIORITY_AGENTS = {
@@ -828,7 +828,7 @@ async function loadUsers() {
   container.innerHTML = '<div class="loading"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>טוען משתמשים...</div>';
 
   try {
-    const { data, error } = await supabase
+    const { data, error } = await db
       .from('agents')
       .select('*')
       .order('created_at', { ascending: true });
@@ -975,13 +975,13 @@ async function saveUser(e) {
   try {
     let result;
     if (isEdit) {
-      result = await supabase
+      result = await db
         .from('agents')
         .update(userData)
         .eq('id', editId);
     } else {
       userData.password = password;
-      result = await supabase
+      result = await db
         .from('agents')
         .insert(userData);
     }
@@ -1005,7 +1005,7 @@ async function confirmDelete() {
   const userId = document.getElementById('deleteUserId').value;
 
   try {
-    const { error } = await supabase
+    const { error } = await db
       .from('agents')
       .delete()
       .eq('id', userId);
