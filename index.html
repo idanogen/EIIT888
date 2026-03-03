@@ -375,7 +375,7 @@ body {
     <h1 class="login-title">כניסה למערכת</h1>
     <p class="login-subtitle">הזינו את פרטי ההתחברות שלכם</p>
 
-    <form id="loginForm" onsubmit="handleLogin(event)">
+    <form id="loginForm">
       <div class="field">
         <label for="username">שם משתמש</label>
         <input type="text" id="username" placeholder="הזינו שם משתמש" required autocomplete="username">
@@ -410,12 +410,18 @@ if (agent) {
   } catch(e) {}
 }
 
-// Supabase configuration - update these after creating your Supabase project
+// Supabase configuration
 const SUPABASE_URL = 'https://tmuijibbpwkfjmkgbddb.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRtdWlqaWJicHdrZmpta2diZGRiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1MzY5NjksImV4cCI6MjA4ODExMjk2OX0.Efq5LJYUf3Cpj01GMR_Wr9ZHn4T2bMuhi55IPnE16wM';
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+let db;
+try {
+  db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+} catch(e) {
+  console.error('Supabase init error:', e);
+}
 
-async function handleLogin(e) {
+// Attach form handler via JS instead of inline onsubmit
+document.getElementById('loginForm').addEventListener('submit', async function(e) {
   e.preventDefault();
   const btn = document.getElementById('loginBtn');
   const errorEl = document.getElementById('errorMsg');
@@ -425,12 +431,18 @@ async function handleLogin(e) {
 
   if (!username || !password) return;
 
+  if (!db) {
+    errorEl.textContent = 'שגיאת מערכת - Supabase לא נטען';
+    errorEl.classList.add('visible');
+    return;
+  }
+
   btn.disabled = true;
   btn.innerHTML = '<svg style="animation:spin 1s linear infinite" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg> מתחבר...';
   errorEl.classList.remove('visible');
 
   try {
-    const { data, error } = await supabase
+    const { data, error } = await db
       .from('agents')
       .select('*')
       .eq('username', username)
@@ -441,18 +453,14 @@ async function handleLogin(e) {
       throw new Error('auth_failed');
     }
 
-    // Store agent info in localStorage
-    const agentData = {
+    localStorage.setItem('eiit_agent', JSON.stringify({
       username: data.username,
       displayName: data.display_name || username,
       priorityAgentId: data.priority_agent_id || '',
       priorityAgentName: data.priority_agent_name || '',
       role: data.role || 'agent'
-    };
+    }));
 
-    localStorage.setItem('eiit_agent', JSON.stringify(agentData));
-
-    // Redirect to order page
     window.location.href = 'order.html';
   } catch (err) {
     errorEl.textContent = 'שם משתמש או סיסמה שגויים';
@@ -461,7 +469,7 @@ async function handleLogin(e) {
     btn.disabled = false;
     btn.innerHTML = 'כניסה <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/></svg>';
   }
-}
+});
 </script>
 </body>
 </html>
