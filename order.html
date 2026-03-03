@@ -1919,8 +1919,12 @@ input[type="date"] {
             <input type="email" id="email" placeholder="example@email.com" required>
           </div>
           <div class="field">
-            <label>כתובת <span class="req">*</span></label>
-            <input type="text" id="address" placeholder="רחוב ומספר, עיר" required>
+            <label>רחוב ומספר <span class="req">*</span></label>
+            <input type="text" id="street" placeholder="לדוגמה: וייצמן 14" required>
+          </div>
+          <div class="field">
+            <label>עיר <span class="req">*</span></label>
+            <input type="text" id="city" placeholder="לדוגמה: רעננה" required>
           </div>
           <div class="field">
             <label>קומה</label>
@@ -2455,7 +2459,8 @@ function handleSubmit(e) {
     customerId: document.getElementById('customerId').value,
     phone: document.getElementById('phone').value,
     email: document.getElementById('email').value,
-    address: document.getElementById('address').value,
+    street: document.getElementById('street').value,
+    city: document.getElementById('city').value,
     floor: document.getElementById('floor').value,
     installDate: document.getElementById('installDate').value,
     stoneColor: document.querySelector('input[name="stoneColor"]:checked')?.value || '',
