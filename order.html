@@ -2294,17 +2294,17 @@ input[type="date"] {
           <span class="stone-picker-label">גוון השיש:</span>
           <div class="stone-options">
             <label class="stone-opt">
-              <input type="radio" name="stoneColor" value="white" checked>
+              <input type="radio" name="stoneColor" value="לבן" required>
               <div class="stone-swatch sw-white"></div>
               <div class="sw-label">לבן</div>
             </label>
             <label class="stone-opt">
-              <input type="radio" name="stoneColor" value="gray">
+              <input type="radio" name="stoneColor" value="אפור" required>
               <div class="stone-swatch sw-gray"></div>
               <div class="sw-label">אפור</div>
             </label>
             <label class="stone-opt">
-              <input type="radio" name="stoneColor" value="black">
+              <input type="radio" name="stoneColor" value="שחור" required>
               <div class="stone-swatch sw-black"></div>
               <div class="sw-label">שחור</div>
             </label>
@@ -2689,12 +2689,12 @@ document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
 /* ═══════ STONE COLOR → SUMMARY THEME ═══════ */
 const summaryEl = document.querySelector('.summary-wrapper');
-summaryEl.classList.add('stone-white');
 
+const stoneValueToClass = { 'לבן': 'stone-white', 'אפור': 'stone-gray', 'שחור': 'stone-black' };
 document.querySelectorAll('input[name="stoneColor"]').forEach(radio => {
   radio.addEventListener('change', () => {
     summaryEl.classList.remove('stone-white', 'stone-gray', 'stone-black');
-    summaryEl.classList.add('stone-' + radio.value);
+    summaryEl.classList.add(stoneValueToClass[radio.value] || 'stone-white');
   });
 });
 
@@ -2800,6 +2800,14 @@ function launchConfetti() {
 
 function handleSubmit(e) {
   e.preventDefault();
+
+  // Validate stone color selection
+  if (!document.querySelector('input[name="stoneColor"]:checked')) {
+    alert('יש לבחור גוון שיש');
+    document.querySelector('.stone-picker').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+
   const btn = document.getElementById('submitBtn');
   btn.disabled = true;
 
