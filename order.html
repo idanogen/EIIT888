@@ -2130,6 +2130,10 @@ input[type="date"] {
             <label>ת.ז. / ח.פ <span class="req">*</span></label>
             <input type="text" id="customerId" placeholder="מספר תעודת זהות או ח.פ" required>
           </div>
+          <div class="field" style="background: var(--purple-ghost, #F6F3FC); border: 1.5px solid var(--purple-light, #7B65D4); border-radius: var(--radius, 14px); padding: 14px 16px;">
+            <label style="color: var(--purple, #503AA8); font-weight: 700;">מספר תעודה (לשימוש בית העסק)</label>
+            <input type="text" id="businessDocNumber" placeholder="הזינו מספר תעודה" style="border-color: var(--purple-light, #7B65D4);">
+          </div>
           <div class="field">
             <label>טלפון <span class="req">*</span></label>
             <input type="tel" id="phone" placeholder="050-0000000" required>
@@ -2647,6 +2651,7 @@ function saveOrderToSupabase(data, orderNum) {
     agent_username: currentAgent ? currentAgent.username : '',
     customer_name: data.customerName,
     customer_id: data.customerId,
+    business_doc_number: data.businessDocNumber,
     phone: data.phone,
     email: data.email,
     street: data.street,
@@ -2849,6 +2854,7 @@ function handleSubmit(e) {
     agentName: currentAgent ? currentAgent.priorityAgentName : '',
     customerName: document.getElementById('customerName').value,
     customerId: document.getElementById('customerId').value,
+    businessDocNumber: document.getElementById('businessDocNumber').value,
     phone: document.getElementById('phone').value,
     email: document.getElementById('email').value,
     street: document.getElementById('street').value,
