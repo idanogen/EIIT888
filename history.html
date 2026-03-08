@@ -1001,7 +1001,7 @@ function statusLabel(s) {
 /* ═══════ LOAD ORDERS ═══════ */
 async function loadOrders() {
   try {
-    let query = db.from('orders').select('*').order('created_at', { ascending: false });
+    let query = db.from('orders').select('*').order('created_at', { ascending: false }).limit(5000);
 
     // Non-admin: only own orders
     if (!isAdmin) {
@@ -1012,6 +1012,7 @@ async function loadOrders() {
     if (error) throw error;
 
     allOrders = data || [];
+    console.log('[EIIT] נטענו ' + allOrders.length + ' הזמנות');
 
     // Populate agent filter for admin
     if (isAdmin) {
@@ -1021,13 +1022,16 @@ async function loadOrders() {
       agents.forEach(a => {
         const name = allOrders.find(o => o.agent_username === a);
         const label = name ? (name.agent_name || name.handler || a) : a;
-        sel.innerHTML += `<option value="${a}">${label}</option>`;
+        const opt = document.createElement('option');
+        opt.value = a;
+        opt.textContent = label;
+        sel.appendChild(opt);
       });
     }
 
     applyFilters();
   } catch(err) {
-    console.error('Load orders error:', err);
+    console.error('[EIIT] שגיאה בטעינת הזמנות:', err);
     document.getElementById('ordersContent').innerHTML = '<div class="empty-state"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>שגיאה בטעינת הזמנות</div>';
   }
 }

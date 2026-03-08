@@ -449,9 +449,11 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
       .single();
 
     if (error || !data) {
+      console.warn('[EIIT] כניסה נכשלה למשתמש:', username);
       throw new Error('auth_failed');
     }
 
+    console.log('[EIIT] כניסה מוצלחת:', username);
     localStorage.setItem('eiit_agent', JSON.stringify({
       username: data.username,
       displayName: data.display_name || username,
@@ -462,7 +464,12 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
 
     window.location.href = 'order.html';
   } catch (err) {
-    errorEl.textContent = 'שם משתמש או סיסמה שגויים';
+    if (err.message === 'auth_failed') {
+      errorEl.textContent = 'שם משתמש או סיסמה שגויים';
+    } else {
+      console.error('[EIIT] שגיאת התחברות:', err);
+      errorEl.textContent = 'שגיאת מערכת - נסו שוב מאוחר יותר';
+    }
     errorEl.classList.add('visible');
   } finally {
     btn.disabled = false;
