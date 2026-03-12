@@ -868,7 +868,7 @@ body {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
-<div style="position:fixed;top:8px;left:8px;z-index:9999;background:#503AA8;color:white;font-size:11px;font-weight:700;padding:3px 10px;border-radius:100px;opacity:0.85;font-family:'Heebo',sans-serif;">V0.9</div>
+<div style="position:fixed;top:8px;left:8px;z-index:9999;background:#503AA8;color:white;font-size:11px;font-weight:700;padding:3px 10px;border-radius:100px;opacity:0.85;font-family:'Heebo',sans-serif;">V1.0</div>
 
 <div class="deco-grid"></div>
 <div class="orb orb-1"></div>
@@ -1300,6 +1300,10 @@ function showOrderDetail(id) {
         <span class="detail-value">${order.street || '-'}</span>
       </div>
       <div class="detail-item">
+        <span class="detail-label">מספר בית</span>
+        <span class="detail-value">${order.house_number || '-'}</span>
+      </div>
+      <div class="detail-item">
         <span class="detail-label">עיר</span>
         <span class="detail-value">${order.city || '-'}</span>
       </div>
@@ -1440,7 +1444,7 @@ function generateOrderPDF(order) {
   const custPairs = [
     ['\u05E9\u05DD:', order.customer_name, '\u05EA.\u05D6 / \u05D7.\u05E4:', order.customer_id],
     ['\u05D8\u05DC\u05E4\u05D5\u05DF:', order.phone, '\u05D0\u05D9\u05DE\u05D9\u05D9\u05DC:', order.email],
-    ['\u05DB\u05EA\u05D5\u05D1\u05EA:', [order.street, order.city, order.floor ? '\u05E7\u05D5\u05DE\u05D4 ' + order.floor : ''].filter(Boolean).join(', ')],
+    ['\u05DB\u05EA\u05D5\u05D1\u05EA:', [order.street + (order.house_number ? ' ' + order.house_number : ''), order.city, order.floor ? '\u05E7\u05D5\u05DE\u05D4 ' + order.floor : ''].filter(Boolean).join(', ')],
   ];
   if (order.install_date) custPairs.push(['\u05EA\u05D0\u05E8\u05D9\u05DA \u05D4\u05EA\u05E7\u05E0\u05D4:', fmtDate(order.install_date)]);
   if (order.stone_color) custPairs.push(['\u05E6\u05D1\u05E2 \u05E9\u05D9\u05E9:', order.stone_color]);

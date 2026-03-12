@@ -2194,7 +2194,7 @@ input[type="date"] {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
-<div style="position:fixed;top:8px;left:8px;z-index:9999;background:#503AA8;color:white;font-size:11px;font-weight:700;padding:3px 10px;border-radius:100px;opacity:0.85;font-family:'Heebo',sans-serif;">V0.9</div>
+<div style="position:fixed;top:8px;left:8px;z-index:9999;background:#503AA8;color:white;font-size:11px;font-weight:700;padding:3px 10px;border-radius:100px;opacity:0.85;font-family:'Heebo',sans-serif;">V1.0</div>
 
 <!-- Decorative background -->
 <div class="deco-grid"></div>
@@ -2330,6 +2330,10 @@ input[type="date"] {
               <svg class="autocomplete-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
               <div class="autocomplete-dropdown" id="streetDropdown"></div>
             </div>
+          </div>
+          <div class="field">
+            <label>מספר בית <span class="req">*</span></label>
+            <input type="text" id="houseNumber" placeholder="מספר בית" required>
           </div>
           <div class="field" style="display:none">
             <label>קומה</label>
@@ -2977,6 +2981,7 @@ function saveOrderToSupabase(data, orderNum) {
     phone: data.phone,
     email: data.email,
     street: data.street,
+    house_number: data.houseNumber,
     city: data.city,
     floor: data.floor,
     install_date: data.installDate || null,
@@ -3231,6 +3236,7 @@ function handleSubmit(e) {
     phone: document.getElementById('phone').value,
     email: document.getElementById('email').value,
     street: document.getElementById('street').value,
+    houseNumber: document.getElementById('houseNumber').value,
     city: document.getElementById('city').value,
     floor: document.getElementById('floor').value,
     installDate: document.getElementById('installDate').value,
@@ -3305,6 +3311,7 @@ function handleSubmit(e) {
       phone: data.phone,
       email: data.email,
       street: data.street,
+      house_number: data.houseNumber,
       city: data.city,
       floor: data.floor,
       install_date: data.installDate,
@@ -3415,7 +3422,7 @@ function generateOrderPDF(order) {
   const custPairs = [
     ['\u05E9\u05DD:', order.customer_name, '\u05EA.\u05D6 / \u05D7.\u05E4:', order.customer_id],
     ['\u05D8\u05DC\u05E4\u05D5\u05DF:', order.phone, '\u05D0\u05D9\u05DE\u05D9\u05D9\u05DC:', order.email],
-    ['\u05DB\u05EA\u05D5\u05D1\u05EA:', [order.street, order.city, order.floor ? '\u05E7\u05D5\u05DE\u05D4 ' + order.floor : ''].filter(Boolean).join(', ')],
+    ['\u05DB\u05EA\u05D5\u05D1\u05EA:', [order.street + (order.house_number ? ' ' + order.house_number : ''), order.city, order.floor ? '\u05E7\u05D5\u05DE\u05D4 ' + order.floor : ''].filter(Boolean).join(', ')],
   ];
   if (order.install_date) custPairs.push(['\u05EA\u05D0\u05E8\u05D9\u05DA \u05D4\u05EA\u05E7\u05E0\u05D4:', fmtDatePdf(order.install_date)]);
   if (order.stone_color) custPairs.push(['\u05E6\u05D1\u05E2 \u05E9\u05D9\u05E9:', order.stone_color]);
