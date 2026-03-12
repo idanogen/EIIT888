@@ -2179,12 +2179,14 @@ input[type="date"] {
             <input type="email" id="email" placeholder="example@email.com" required>
           </div>
           <div class="field">
-            <label>רחוב ומספר <span class="req">*</span></label>
-            <input type="text" id="street" placeholder="לדוגמה: וייצמן 14" required>
+            <label>עיר <span class="req">*</span></label>
+            <input type="text" id="city" list="cityList" placeholder="הקלד לחיפוש עיר..." required autocomplete="off">
+            <datalist id="cityList"></datalist>
           </div>
           <div class="field">
-            <label>עיר <span class="req">*</span></label>
-            <input type="text" id="city" placeholder="לדוגמה: רעננה" required>
+            <label>רחוב ומספר <span class="req">*</span></label>
+            <input type="text" id="street" list="streetList" placeholder="בחר עיר קודם..." required autocomplete="off">
+            <datalist id="streetList"></datalist>
           </div>
           <div class="field" style="display:none">
             <label>קומה</label>
@@ -2652,6 +2654,83 @@ function logout() {
   localStorage.removeItem('eiit_agent');
   window.location.href = 'index.html';
 }
+
+/* ═══════ GOV.IL CITIES & STREETS AUTOCOMPLETE ═══════ */
+const GOV_API = 'https://data.gov.il/api/3/action/datastore_search';
+const CITIES_ID = 'd4901968-dad3-4845-a9b0-a57d027f11ab';
+const STREETS_ID = 'a7296d1a-f8c9-4b70-96c2-6ebb4352f8e3';
+let citiesCache = null;
+const streetsCache = {};
+let selectedCityCode = null;
+
+async function fetchCities() {
+  if (citiesCache) return citiesCache;
+  const res = await fetch(`${GOV_API}?resource_id=${CITIES_ID}&limit=1300`);
+  const data = await res.json();
+  const seen = new Set();
+  citiesCache = data.result.records
+    .filter(r => {
+      const name = r['שם_ישוב']?.trim();
+      if (!name || seen.has(r['סמל_ישוב'])) return false;
+      seen.add(r['סמל_ישוב']);
+      return true;
+    })
+    .map(r => ({ code: r['סמל_ישוב'], name: r['שם_ישוב'].trim() }))
+    .sort((a, b) => a.name.localeCompare(b.name, 'he'));
+  return citiesCache;
+}
+
+async function fetchStreets(cityCode) {
+  if (streetsCache[cityCode]) return streetsCache[cityCode];
+  const filter = JSON.stringify({ סמל_ישוב: cityCode });
+  const res = await fetch(`${GOV_API}?resource_id=${STREETS_ID}&filters=${encodeURIComponent(filter)}&limit=1000`);
+  const data = await res.json();
+  const seen = new Set();
+  streetsCache[cityCode] = data.result.records
+    .filter(r => {
+      const name = r['שם_רחוב']?.trim();
+      if (!name || seen.has(r['סמל_רחוב'])) return false;
+      seen.add(r['סמל_רחוב']);
+      return true;
+    })
+    .map(r => ({ code: r['סמל_רחוב'], name: r['שם_רחוב'].trim() }))
+    .sort((a, b) => a.name.localeCompare(b.name, 'he'));
+  return streetsCache[cityCode];
+}
+
+// Load cities on page load
+fetchCities().then(cities => {
+  const dl = document.getElementById('cityList');
+  cities.forEach(c => {
+    const opt = document.createElement('option');
+    opt.value = c.name;
+    opt.dataset.code = c.code;
+    dl.appendChild(opt);
+  });
+  document.getElementById('city').placeholder = 'הקלד לחיפוש עיר...';
+}).catch(e => console.warn('[EIIT] שגיאה בטעינת ערים:', e));
+
+// When city is selected, load its streets
+document.getElementById('city').addEventListener('input', async function() {
+  const cities = await fetchCities();
+  const match = cities.find(c => c.name === this.value);
+  if (!match) return;
+  selectedCityCode = match.code;
+
+  const streets = await fetchStreets(match.code);
+  const dl = document.getElementById('streetList');
+  dl.innerHTML = '';
+  streets.forEach(s => {
+    const opt = document.createElement('option');
+    opt.value = s.name;
+    dl.appendChild(opt);
+  });
+
+  const streetInput = document.getElementById('street');
+  streetInput.placeholder = 'הקלד לחיפוש רחוב...';
+  streetInput.value = '';
+  streetInput.focus();
+});
 
 /* ═══════ SUPABASE CONFIG ═══════ */
 const SUPABASE_URL = 'https://tmuijibbpwkfjmkgbddb.supabase.co';
