@@ -623,6 +623,13 @@ body {
 
 .field:focus-within label { color: var(--purple); }
 
+.field.field-error input,
+.field.field-error input:focus {
+  border-color: #E53E3E;
+  box-shadow: 0 0 0 3px rgba(229,62,62,0.12);
+}
+.field.field-error label { color: #E53E3E; }
+
 .field select {
   cursor: pointer;
   appearance: none;
@@ -3171,6 +3178,34 @@ document.querySelector('.product-table').addEventListener('click', (e) => {
 document.querySelectorAll('.qty-input, .price-input').forEach(input => {
   input.addEventListener('input', recalc);
   input.addEventListener('focus', () => input.select());
+});
+
+/* ═══════ REAL-TIME FIELD VALIDATION ═══════ */
+const phoneInput = document.getElementById('phone');
+const emailInput = document.getElementById('email');
+
+function validateField(input, testFn) {
+  const field = input.closest('.field');
+  if (!input.value) { field.classList.remove('field-error'); return; }
+  field.classList.toggle('field-error', !testFn(input.value));
+}
+
+phoneInput.addEventListener('blur', () => {
+  validateField(phoneInput, v => /^0[2-9][\d-]{7,9}$/.test(v) && v.replace(/-/g, '').length >= 9 && v.replace(/-/g, '').length <= 10);
+});
+phoneInput.addEventListener('input', () => {
+  if (phoneInput.closest('.field').classList.contains('field-error')) {
+    validateField(phoneInput, v => /^0[2-9][\d-]{7,9}$/.test(v) && v.replace(/-/g, '').length >= 9 && v.replace(/-/g, '').length <= 10);
+  }
+});
+
+emailInput.addEventListener('blur', () => {
+  validateField(emailInput, v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v));
+});
+emailInput.addEventListener('input', () => {
+  if (emailInput.closest('.field').classList.contains('field-error')) {
+    validateField(emailInput, v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v));
+  }
 });
 
 /* ═══════ SUBMIT ═══════ */
