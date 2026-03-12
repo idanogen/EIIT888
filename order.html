@@ -2266,7 +2266,7 @@ input[type="date"] {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
-<div style="position:fixed;top:8px;left:8px;z-index:9999;background:#503AA8;color:white;font-size:11px;font-weight:700;padding:3px 10px;border-radius:100px;opacity:0.85;font-family:'Heebo',sans-serif;">V1.4</div>
+<div style="position:fixed;top:8px;left:8px;z-index:9999;background:#503AA8;color:white;font-size:11px;font-weight:700;padding:3px 10px;border-radius:100px;opacity:0.85;font-family:'Heebo',sans-serif;">V1.5</div>
 
 <!-- Decorative background -->
 <div class="deco-grid"></div>
@@ -3192,7 +3192,7 @@ function validateField(input, testFn) {
 
 function isValidPhone(v) {
   const digits = v.replace(/-/g, '');
-  return /^0[2-9]\d{7,8}$/.test(digits);
+  return /^0[2-9]\d{8}$/.test(digits);
 }
 
 phoneInput.addEventListener('blur', () => validateField(phoneInput, isValidPhone));
@@ -3273,7 +3273,7 @@ function handleSubmit(e) {
 
   // Validate phone number (10 digits, optional hyphens)
   const phoneRaw = document.getElementById('phone').value.replace(/-/g, '');
-  if (!/^0[2-9]\d{7,8}$/.test(phoneRaw)) {
+  if (!/^0[2-9]\d{8}$/.test(phoneRaw)) {
     alert('מספר טלפון לא תקין — יש להזין מספר ישראלי (לדוגמה: 052-3694547)');
     document.getElementById('phone').focus();
     return;
