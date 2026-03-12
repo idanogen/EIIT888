@@ -868,7 +868,7 @@ body {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
-<div style="position:fixed;top:8px;left:8px;z-index:9999;background:#503AA8;color:white;font-size:11px;font-weight:700;padding:3px 10px;border-radius:100px;opacity:0.85;font-family:'Heebo',sans-serif;">V0.1</div>
+<div style="position:fixed;top:8px;left:8px;z-index:9999;background:#503AA8;color:white;font-size:11px;font-weight:700;padding:3px 10px;border-radius:100px;opacity:0.85;font-family:'Heebo',sans-serif;">V0.2</div>
 
 <div class="deco-grid"></div>
 <div class="orb orb-1"></div>
@@ -1387,7 +1387,7 @@ function buildOrderPDFHtml(order) {
   `).join('');
 
   return `
-    <div style="direction:rtl;font-family:Arial,sans-serif;padding:40px;width:595px;color:#1A1432;">
+    <div style="direction:rtl;font-family:Arial,Heebo,sans-serif;padding:40px;width:595px;color:#1A1432;background:white;">
       <!-- Header -->
       <div style="text-align:center;margin-bottom:24px;padding-bottom:20px;border-bottom:3px solid #503AA8;">
         <h1 style="color:#503AA8;font-size:26px;margin:0 0 4px;">אינדוקציה כהלכה 888</h1>
@@ -1448,20 +1448,24 @@ function buildOrderPDFHtml(order) {
       </table>` : ''}
 
       <!-- Totals -->
-      <div style="background:#F8F5F0;border-radius:10px;padding:16px 20px;">
-        <div style="display:flex;justify-content:space-between;padding:4px 0;font-size:14px;color:#4A4560;">
-          <span>סכום ביניים</span><span>₪${Math.round(order.subtotal || 0).toLocaleString('he-IL')}</span>
-        </div>
-        <div style="display:flex;justify-content:space-between;padding:4px 0;font-size:14px;color:#4A4560;">
-          <span>מע״מ (18%)</span><span>₪${Math.round(order.vat || 0).toLocaleString('he-IL')}</span>
-        </div>
-        <div style="display:flex;justify-content:space-between;padding:10px 0 4px;font-size:18px;font-weight:700;color:#503AA8;border-top:2px solid #E8E4F0;margin-top:6px;">
-          <span>סה״כ לתשלום</span><span>₪${Math.round(order.grand_total || 0).toLocaleString('he-IL')}</span>
-        </div>
-        <div style="display:flex;justify-content:space-between;padding:4px 0;font-size:14px;color:#4A4560;">
-          <span>מקדמה (50%)</span><span>₪${Math.round(order.advance || 0).toLocaleString('he-IL')}</span>
-        </div>
-      </div>
+      <table style="width:100%;border-collapse:collapse;background:#F8F5F0;border-radius:10px;padding:16px 20px;">
+        <tr>
+          <td style="padding:6px 20px;font-size:14px;color:#4A4560;text-align:right;">סכום ביניים</td>
+          <td style="padding:6px 20px;font-size:14px;color:#4A4560;text-align:left;">₪${Math.round(order.subtotal || 0).toLocaleString('he-IL')}</td>
+        </tr>
+        <tr>
+          <td style="padding:6px 20px;font-size:14px;color:#4A4560;text-align:right;">מע״מ (18%)</td>
+          <td style="padding:6px 20px;font-size:14px;color:#4A4560;text-align:left;">₪${Math.round(order.vat || 0).toLocaleString('he-IL')}</td>
+        </tr>
+        <tr style="border-top:2px solid #E8E4F0;">
+          <td style="padding:10px 20px 6px;font-size:18px;font-weight:700;color:#503AA8;text-align:right;">סה״כ לתשלום</td>
+          <td style="padding:10px 20px 6px;font-size:18px;font-weight:700;color:#503AA8;text-align:left;">₪${Math.round(order.grand_total || 0).toLocaleString('he-IL')}</td>
+        </tr>
+        <tr>
+          <td style="padding:6px 20px;font-size:14px;color:#4A4560;text-align:right;">מקדמה (50%)</td>
+          <td style="padding:6px 20px;font-size:14px;color:#4A4560;text-align:left;">₪${Math.round(order.advance || 0).toLocaleString('he-IL')}</td>
+        </tr>
+      </table>
 
       ${order.notes ? `
       <div style="margin-top:16px;padding:12px 16px;background:#FBF6E8;border-radius:8px;border-right:3px solid #C9A84C;">
@@ -1501,16 +1505,21 @@ async function shareOrderOnWhatsApp(orderId) {
     container.style.position = 'absolute';
     container.style.left = '0';
     container.style.top = '0';
+    container.style.width = '595px';
     container.style.zIndex = '-9999';
-    container.style.opacity = '1';
     container.innerHTML = htmlContent;
     document.body.appendChild(container);
+
+    // Wait for browser to fully render the element
+    await new Promise(resolve => {
+      requestAnimationFrame(() => setTimeout(resolve, 200));
+    });
 
     // Generate PDF blob
     const pdfBlob = await html2pdf().from(container).set({
       margin: 0,
       filename: `order-${order.order_number}.pdf`,
-      html2canvas: { scale: 2, useCORS: true, logging: false },
+      html2canvas: { scale: 2, useCORS: true, logging: false, width: 595, scrollY: 0, windowWidth: 595 },
       jsPDF: { unit: 'pt', format: 'a4', orientation: 'portrait' }
     }).outputPdf('blob');
 
