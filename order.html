@@ -863,6 +863,75 @@ body {
   margin-right: 8px;
 }
 
+/* Qty Stepper */
+.qty-stepper {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  border: 1.5px solid var(--purple-mist);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--purple-ghost);
+  transition: border-color 0.2s;
+}
+.qty-stepper:focus-within {
+  border-color: var(--purple-light);
+  box-shadow: 0 0 0 3px rgba(80,58,168,0.10);
+}
+.qty-stepper .qty-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: var(--purple);
+  font-size: 18px;
+  font-weight: 700;
+  transition: background 0.15s, color 0.15s;
+  user-select: none;
+  -webkit-user-select: none;
+  line-height: 1;
+}
+.qty-stepper .qty-btn:hover {
+  background: var(--purple-mist);
+  color: var(--purple-deep);
+}
+.qty-stepper .qty-btn:active {
+  background: var(--purple-light);
+  color: #fff;
+}
+.qty-stepper .qty-btn.disabled {
+  opacity: 0.3;
+  cursor: default;
+  pointer-events: none;
+}
+.qty-stepper .qty-input {
+  width: 42px;
+  text-align: center;
+  border: none;
+  border-right: 1.5px solid var(--purple-mist);
+  border-left: 1.5px solid var(--purple-mist);
+  background: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--purple-deep);
+  padding: 6px 0;
+  -moz-appearance: textfield;
+  outline: none;
+}
+.qty-stepper .qty-input::-webkit-outer-spin-button,
+.qty-stepper .qty-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.qty-stepper .qty-input[readonly] {
+  background: var(--purple-ghost);
+  color: var(--text-muted);
+}
+
 .product-table input[type="number"] {
   width: 90px;
   padding: 10px 14px;
@@ -2194,7 +2263,7 @@ input[type="date"] {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
-<div style="position:fixed;top:8px;left:8px;z-index:9999;background:#503AA8;color:white;font-size:11px;font-weight:700;padding:3px 10px;border-radius:100px;opacity:0.85;font-family:'Heebo',sans-serif;">V1.1</div>
+<div style="position:fixed;top:8px;left:8px;z-index:9999;background:#503AA8;color:white;font-size:11px;font-weight:700;padding:3px 10px;border-radius:100px;opacity:0.85;font-family:'Heebo',sans-serif;">V1.2</div>
 
 <!-- Decorative background -->
 <div class="deco-grid"></div>
@@ -2381,7 +2450,7 @@ input[type="date"] {
                   </div>
                 </td>
                 <td data-label="מחיר יח׳"><input type="number" class="price-input" readonly data-row="0" min="0" value="4661" placeholder="₪"></td>
-                <td data-label="כמות"><input type="number" class="qty-input" data-row="0" min="0" value="0"></td>
+                <td data-label="כמות"><div class="qty-stepper"><button type="button" class="qty-btn qty-plus">+</button><input type="number" class="qty-input" data-row="0" min="0" value="0"><button type="button" class="qty-btn qty-minus">−</button></div></td>
                 <td data-label="סה״כ"><span class="line-total" data-total="0">₪ 0</span></td>
               </tr>
               <tr data-sku="1002">
@@ -2392,7 +2461,7 @@ input[type="date"] {
                   </div>
                 </td>
                 <td data-label="מחיר יח׳"><input type="number" class="price-input" readonly data-row="1" min="0" value="4661" placeholder="₪"></td>
-                <td data-label="כמות"><input type="number" class="qty-input" data-row="1" min="0" value="0"></td>
+                <td data-label="כמות"><div class="qty-stepper"><button type="button" class="qty-btn qty-plus">+</button><input type="number" class="qty-input" data-row="1" min="0" value="0"><button type="button" class="qty-btn qty-minus">−</button></div></td>
                 <td data-label="סה״כ"><span class="line-total" data-total="1">₪ 0</span></td>
               </tr>
               <tr data-sku="1003">
@@ -2403,7 +2472,7 @@ input[type="date"] {
                   </div>
                 </td>
                 <td data-label="מחיר יח׳"><input type="number" class="price-input" readonly data-row="2" min="0" value="4661" placeholder="₪"></td>
-                <td data-label="כמות"><input type="number" class="qty-input" data-row="2" min="0" value="0"></td>
+                <td data-label="כמות"><div class="qty-stepper"><button type="button" class="qty-btn qty-plus">+</button><input type="number" class="qty-input" data-row="2" min="0" value="0"><button type="button" class="qty-btn qty-minus">−</button></div></td>
                 <td data-label="סה״כ"><span class="line-total" data-total="2">₪ 0</span></td>
               </tr>
               <tr data-sku="1004">
@@ -2414,7 +2483,7 @@ input[type="date"] {
                   </div>
                 </td>
                 <td data-label="מחיר יח׳"><input type="number" class="price-input" readonly data-row="3" min="0" value="2288" placeholder="₪"></td>
-                <td data-label="כמות"><input type="number" class="qty-input" data-row="3" min="0" value="0"></td>
+                <td data-label="כמות"><div class="qty-stepper"><button type="button" class="qty-btn qty-plus">+</button><input type="number" class="qty-input" data-row="3" min="0" value="0"><button type="button" class="qty-btn qty-minus">−</button></div></td>
                 <td data-label="סה״כ"><span class="line-total" data-total="3">₪ 0</span></td>
               </tr>
               <tr data-sku="1005">
@@ -2425,7 +2494,7 @@ input[type="date"] {
                   </div>
                 </td>
                 <td data-label="מחיר יח׳"><span class="price-display" style="opacity:0.4">0</span></td>
-                <td data-label="כמות"><input type="number" class="qty-input" data-row="4" min="0" value="0" readonly id="fanQty" data-free="true"></td>
+                <td data-label="כמות"><div class="qty-stepper"><input type="number" class="qty-input" data-row="4" min="0" value="0" readonly id="fanQty" data-free="true"></div></td>
                 <td data-label="סה״כ"><span class="line-total" data-total="4">₪ 0</span></td>
               </tr>
               <tr data-sku="1009">
@@ -2436,7 +2505,7 @@ input[type="date"] {
                   </div>
                 </td>
                 <td data-label="מחיר יח׳"><span class="price-display" style="opacity:0.4">0</span></td>
-                <td data-label="כמות"><input type="number" class="qty-input" data-row="5" min="0" value="0" id="cabinetQty" data-free="true"></td>
+                <td data-label="כמות"><div class="qty-stepper"><button type="button" class="qty-btn qty-plus">+</button><input type="number" class="qty-input" data-row="5" min="0" value="0" id="cabinetQty" data-free="true"><button type="button" class="qty-btn qty-minus">−</button></div></td>
                 <td data-label="סה״כ"><span class="line-total" data-total="5">₪ 0</span></td>
               </tr>
               <tr data-sku="1008">
@@ -2447,7 +2516,7 @@ input[type="date"] {
                   </div>
                 </td>
                 <td data-label="מחיר יח׳"><span class="price-display" style="opacity:0.4">0</span></td>
-                <td data-label="כמות"><input type="number" class="qty-input" data-row="6" min="0" value="0" readonly id="projectorQty" data-free="true"></td>
+                <td data-label="כמות"><div class="qty-stepper"><input type="number" class="qty-input" data-row="6" min="0" value="0" readonly id="projectorQty" data-free="true"></div></td>
                 <td data-label="סה״כ"><span class="line-total" data-total="6">₪ 0</span></td>
               </tr>
               <tr data-sku="1006">
@@ -2459,7 +2528,7 @@ input[type="date"] {
                   </div>
                 </td>
                 <td data-label="מחיר יח׳"><span class="price-display" style="opacity:0.4">0</span></td>
-                <td data-label="כמות"><input type="number" class="qty-input" data-row="7" data-free="true" min="0" value="0"></td>
+                <td data-label="כמות"><div class="qty-stepper"><button type="button" class="qty-btn qty-plus">+</button><input type="number" class="qty-input" data-row="7" data-free="true" min="0" value="0"><button type="button" class="qty-btn qty-minus">−</button></div></td>
                 <td data-label="סה״כ"><span class="line-total">₪ 0</span></td>
               </tr>
               <tr data-sku="1007">
@@ -2471,7 +2540,7 @@ input[type="date"] {
                   </div>
                 </td>
                 <td data-label="מחיר יח׳"><span class="price-display" style="opacity:0.4">0</span></td>
-                <td data-label="כמות"><input type="number" class="qty-input" data-row="8" data-free="true" min="0" value="0"></td>
+                <td data-label="כמות"><div class="qty-stepper"><button type="button" class="qty-btn qty-plus">+</button><input type="number" class="qty-input" data-row="8" data-free="true" min="0" value="0"><button type="button" class="qty-btn qty-minus">−</button></div></td>
                 <td data-label="סה״כ"><span class="line-total">₪ 0</span></td>
               </tr>
             </tbody>
@@ -3090,6 +3159,18 @@ function recalc() {
   document.getElementById('grandTotal').textContent = fmt(grand);
   document.getElementById('advance').textContent = fmt(adv);
 }
+
+document.querySelectorAll('.qty-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const input = btn.closest('.qty-stepper').querySelector('.qty-input');
+    if (input.readOnly) return;
+    let val = parseInt(input.value) || 0;
+    if (btn.classList.contains('qty-plus')) val++;
+    else val = Math.max(0, val - 1);
+    input.value = val;
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+  });
+});
 
 document.querySelectorAll('.qty-input, .price-input').forEach(input => {
   input.addEventListener('input', recalc);
