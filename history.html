@@ -893,7 +893,6 @@ body {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
-<div style="position:fixed;top:8px;left:8px;z-index:9999;background:#503AA8;color:white;font-size:11px;font-weight:700;padding:3px 10px;border-radius:100px;opacity:0.85;font-family:'Heebo',sans-serif;">V1.0</div>
 
 <div class="deco-grid"></div>
 <div class="orb orb-1"></div>
@@ -1046,6 +1045,13 @@ function fmt(n) {
   return '₪ ' + Math.round(n).toLocaleString('he-IL');
 }
 
+function esc(str) {
+  if (!str) return '-';
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+
 function fmtDate(dateStr) {
   if (!dateStr) return '-';
   const d = new Date(dateStr);
@@ -1139,7 +1145,11 @@ function clearFilters() {
 }
 
 // Attach filter listeners
-document.getElementById('filterSearch').addEventListener('input', applyFilters);
+let searchTimer;
+document.getElementById('filterSearch').addEventListener('input', () => {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(applyFilters, 300);
+});
 document.getElementById('filterDateFrom').addEventListener('change', applyFilters);
 document.getElementById('filterDateTo').addEventListener('change', applyFilters);
 document.getElementById('filterStatus').addEventListener('change', applyFilters);
@@ -1182,10 +1192,10 @@ function renderTable() {
 
   pageOrders.forEach(o => {
     html += `<tr onclick="showOrderDetail('${o.id}')">
-      <td class="order-number-cell">${o.order_number || '-'}</td>
+      <td class="order-number-cell">${esc(o.order_number)}</td>
       <td>${fmtDate(o.order_date)}</td>
-      <td>${o.customer_name || '-'}</td>
-      ${isAdmin ? `<td>${o.agent_name || o.handler || '-'}</td>` : ''}
+      <td>${esc(o.customer_name)}</td>
+      ${isAdmin ? `<td>${esc(o.agent_name || o.handler)}</td>` : ''}
       <td class="amount-cell">${fmt(o.grand_total || 0)}</td>
       <td><span class="status-badge ${o.status || 'new'}">${statusLabel(o.status)}</span></td>
     </tr>`;
@@ -1209,19 +1219,19 @@ function renderMobileCards() {
   container.innerHTML = pageOrders.map(o => `
     <div class="order-card" onclick="showOrderDetail('${o.id}')">
       <div class="order-card-header">
-        <span class="order-card-num">${o.order_number || '-'}</span>
+        <span class="order-card-num">${esc(o.order_number)}</span>
         <span class="status-badge ${o.status || 'new'}">${statusLabel(o.status)}</span>
       </div>
       <div class="order-card-body">
         <div>
           <div class="order-card-label">לקוח</div>
-          <div>${o.customer_name || '-'}</div>
+          <div>${esc(o.customer_name)}</div>
         </div>
         <div>
           <div class="order-card-label">תאריך</div>
           <div>${fmtDate(o.order_date)}</div>
         </div>
-        ${isAdmin ? `<div><div class="order-card-label">סוכן</div><div>${o.agent_name || o.handler || '-'}</div></div>` : ''}
+        ${isAdmin ? `<div><div class="order-card-label">סוכן</div><div>${esc(o.agent_name || o.handler)}</div></div>` : ''}
         <div>
           <div class="order-card-label">סכום</div>
           <div class="order-card-amount">${fmt(o.grand_total || 0)}</div>
@@ -1284,8 +1294,8 @@ function showOrderDetail(id) {
       <thead><tr><th>מוצר</th><th>מק״ט</th><th>מחיר</th><th>כמות</th><th>סה״כ</th></tr></thead>
       <tbody>${products.map(p => `
         <tr>
-          <td>${p.name || '-'}</td>
-          <td>${p.sku || '-'}</td>
+          <td>${esc(p.name)}</td>
+          <td>${esc(p.sku)}</td>
           <td>${fmt(p.price || 0)}</td>
           <td>${p.qty || 0}</td>
           <td style="font-weight:600">${fmt(p.total || (p.price || 0) * (p.qty || 0))}</td>
@@ -1306,35 +1316,35 @@ function showOrderDetail(id) {
       </div>
       <div class="detail-item">
         <span class="detail-label">שם לקוח</span>
-        <span class="detail-value">${order.customer_name || '-'}</span>
+        <span class="detail-value">${esc(order.customer_name)}</span>
       </div>
       <div class="detail-item">
         <span class="detail-label">ת.ז / ח.פ</span>
-        <span class="detail-value">${order.customer_id || '-'}</span>
+        <span class="detail-value">${esc(order.customer_id)}</span>
       </div>
       <div class="detail-item">
         <span class="detail-label">טלפון</span>
-        <span class="detail-value">${order.phone ? `<a href="tel:${order.phone}" style="color:var(--purple);text-decoration:none">${order.phone}</a>` : '-'}</span>
+        <span class="detail-value">${order.phone ? `<a href="tel:${esc(order.phone)}" style="color:var(--purple);text-decoration:none">${esc(order.phone)}</a>` : '-'}</span>
       </div>
       <div class="detail-item">
         <span class="detail-label">אימייל</span>
-        <span class="detail-value">${order.email || '-'}</span>
+        <span class="detail-value">${esc(order.email)}</span>
       </div>
       <div class="detail-item">
         <span class="detail-label">רחוב</span>
-        <span class="detail-value">${order.street || '-'}</span>
+        <span class="detail-value">${esc(order.street)}</span>
       </div>
       <div class="detail-item">
         <span class="detail-label">מספר בית</span>
-        <span class="detail-value">${order.house_number || '-'}</span>
+        <span class="detail-value">${esc(order.house_number)}</span>
       </div>
       <div class="detail-item">
         <span class="detail-label">עיר</span>
-        <span class="detail-value">${order.city || '-'}</span>
+        <span class="detail-value">${esc(order.city)}</span>
       </div>
       <div class="detail-item">
         <span class="detail-label">קומה</span>
-        <span class="detail-value">${order.floor || '-'}</span>
+        <span class="detail-value">${esc(order.floor)}</span>
       </div>
       <div class="detail-item">
         <span class="detail-label">סניף</span>
@@ -1354,9 +1364,9 @@ function showOrderDetail(id) {
       </div>
       <div class="detail-item">
         <span class="detail-label">צבע שיש</span>
-        <span class="detail-value">${order.stone_color || '-'}</span>
+        <span class="detail-value">${esc(order.stone_color)}</span>
       </div>
-      ${order.notes ? `<div class="detail-item full"><span class="detail-label">הערות</span><span class="detail-value">${order.notes}</span></div>` : ''}
+      ${order.notes ? `<div class="detail-item full"><span class="detail-label">הערות</span><span class="detail-value">${esc(order.notes)}</span></div>` : ''}
     </div>
 
     <div class="detail-divider"></div>
@@ -1424,11 +1434,18 @@ function generateOrderPDF(order) {
   let y = 48;
   const R = PW - M;
 
-  function txt(str, x, yy, font, color, align) {
+  function txt(str, x, yy, font, color, align, maxW) {
     ctx.font = font;
     ctx.fillStyle = color;
     ctx.textAlign = align || 'right';
-    ctx.fillText(str || '-', x, yy);
+    let s = str || '-';
+    if (maxW) {
+      while (ctx.measureText(s).width > maxW && s.length > 1) {
+        s = s.slice(0, -1);
+      }
+      if (s !== (str || '-')) s += '...';
+    }
+    ctx.fillText(s, x, yy);
   }
   function roundRect(x, yy, w, h, r, color) {
     ctx.fillStyle = color;
@@ -1477,7 +1494,7 @@ function generateOrderPDF(order) {
 
   custPairs.forEach(row => {
     txt(row[0], R - 16, y, '12px Heebo, Arial', '#8C87A0');
-    txt(row[1] || '-', R - 90, y, 'bold 12px Heebo, Arial', '#1A1432');
+    txt(row[1] || '-', R - 90, y, 'bold 12px Heebo, Arial', '#1A1432', 'right', 160);
     if (row[2]) {
       txt(row[2], PW / 2 - 16, y, '12px Heebo, Arial', '#8C87A0');
       txt(row[3] || '-', PW / 2 - 90, y, 'bold 12px Heebo, Arial', '#1A1432');
@@ -1505,7 +1522,7 @@ function generateOrderPDF(order) {
         roundRect(M, y - 2, W, prodRowH, 4, '#FAFAFE');
       }
       const ty = y + 14;
-      txt(p.name || '-', colX[0], ty, '12px Heebo, Arial', '#1A1432');
+      txt(p.name || '-', colX[0], ty, '12px Heebo, Arial', '#1A1432', 'right', 180);
       txt(p.sku || '-', colX[1], ty, '12px Heebo, Arial', '#8C87A0');
       txt(String(p.qty || 0), colX[2], ty, 'bold 12px Heebo, Arial', '#1A1432');
       txt(money(p.price), colX[3], ty, '12px Heebo, Arial', '#4A4560');
@@ -1554,20 +1571,33 @@ function generateOrderPDF(order) {
 }
 
 function formatPhoneForWhatsApp(phone) {
-  let cleaned = (phone || '').replace(/[\s\-\(\)\+]/g, '');
-  if (cleaned.startsWith('0')) {
+  let cleaned = (phone || '').replace(/[\s\-\(\)]/g, '');
+  if (cleaned.startsWith('+972')) {
+    cleaned = cleaned.substring(1);
+  } else if (cleaned.startsWith('00972')) {
+    cleaned = cleaned.substring(2);
+  } else if (cleaned.startsWith('0')) {
     cleaned = '972' + cleaned.substring(1);
   }
-  return cleaned;
+  return cleaned.replace(/\D/g, '');
 }
 
 function printOrderFromHistory(orderId) {
   const order = allOrders.find(o => o.id === orderId);
   if (!order) return;
-  const pdfBlob = generateOrderPDF(order);
-  const url = URL.createObjectURL(pdfBlob);
-  const w = window.open(url);
-  w.onload = () => { w.print(); };
+  try {
+    const pdfBlob = generateOrderPDF(order);
+    const url = URL.createObjectURL(pdfBlob);
+    const w = window.open(url);
+    if (!w) {
+      alert('חלון ההדפסה נחסם. נא לאפשר חלונות קופצים (popups) ולנסות שנית.');
+      return;
+    }
+    w.onload = () => { w.print(); };
+  } catch (err) {
+    console.error('[EIIT] שגיאה בהדפסה:', err);
+    alert('שגיאה ביצירת PDF להדפסה. נסה שנית.');
+  }
 }
 
 async function shareOrderOnWhatsApp(orderId) {
