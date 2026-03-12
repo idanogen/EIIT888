@@ -3094,10 +3094,15 @@ function saveOrderToSupabase(data, orderNum) {
     notes: data.notes,
     status: 'new'
   }).then(({ error }) => {
-    if (error) console.error('[EIIT] שגיאה בשמירה ל-Supabase:', error.message, error);
-    else console.log('[EIIT] הזמנה נשמרה בהצלחה ב-Supabase:', orderNum);
+    if (error) {
+      console.error('[EIIT] שגיאה בשמירה ל-Supabase:', error.message, error);
+      alert('שגיאה בשמירת ההזמנה למסד הנתונים. ההזמנה נשלחה אך ייתכן שלא נשמרה. נא לפנות למנהל המערכת.');
+    } else {
+      console.log('[EIIT] הזמנה נשמרה בהצלחה ב-Supabase:', orderNum);
+    }
   }).catch(err => {
     console.error('[EIIT] שגיאת רשת בשמירה ל-Supabase:', err);
+    alert('שגיאת רשת בשמירת ההזמנה. ההזמנה נשלחה אך ייתכן שלא נשמרה. נא לפנות למנהל המערכת.');
   });
 }
 
@@ -3655,11 +3660,15 @@ function generateOrderPDF(order) {
 }
 
 function formatPhoneForWhatsApp(phone) {
-  let cleaned = (phone || '').replace(/[\s\-\(\)\+]/g, '');
-  if (cleaned.startsWith('0')) {
+  let cleaned = (phone || '').replace(/[\s\-\(\)]/g, '');
+  if (cleaned.startsWith('+972')) {
+    cleaned = cleaned.substring(1); // remove +, keep 972...
+  } else if (cleaned.startsWith('00972')) {
+    cleaned = cleaned.substring(2); // remove 00, keep 972...
+  } else if (cleaned.startsWith('0')) {
     cleaned = '972' + cleaned.substring(1);
   }
-  return cleaned;
+  return cleaned.replace(/\D/g, '');
 }
 
 async function shareLastOrderOnWhatsApp() {
@@ -3702,10 +3711,19 @@ async function shareLastOrderOnWhatsApp() {
 
 function printOrder() {
   if (!lastOrderData) return;
-  const pdfBlob = generateOrderPDF(lastOrderData);
-  const url = URL.createObjectURL(pdfBlob);
-  const w = window.open(url);
-  w.onload = () => { w.print(); };
+  try {
+    const pdfBlob = generateOrderPDF(lastOrderData);
+    const url = URL.createObjectURL(pdfBlob);
+    const w = window.open(url);
+    if (!w) {
+      alert('חלון ההדפסה נחסם. נא לאפשר חלונות קופצים (popups) ולנסות שנית.');
+      return;
+    }
+    w.onload = () => { w.print(); };
+  } catch (err) {
+    console.error('[EIIT] שגיאה בהדפסה:', err);
+    alert('שגיאה ביצירת PDF להדפסה. נסה שנית.');
+  }
 }
 
 function copyOrderNumber() {
