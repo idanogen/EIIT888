@@ -3269,7 +3269,7 @@ function handleSubmit(e) {
   document.querySelectorAll('.product-table tbody tr').forEach(row => {
     const qtyInput = row.querySelector('.qty-input');
     const qty = parseInt(qtyInput?.value) || 0;
-    if (qty > 0) {
+    if (qty > 0 && row.dataset.sku !== '1009') {
       products.push({
         PARTNAME: row.dataset.sku || '',
         TQUANT: qty
