@@ -2290,7 +2290,7 @@ input[type="date"] {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
-<div style="position:fixed;top:8px;left:8px;z-index:9999;background:#503AA8;color:white;font-size:11px;font-weight:700;padding:3px 10px;border-radius:100px;opacity:0.85;font-family:'Heebo',sans-serif;">V1.7</div>
+<div style="position:fixed;top:8px;left:8px;z-index:9999;background:#503AA8;color:white;font-size:11px;font-weight:700;padding:3px 10px;border-radius:100px;opacity:0.85;font-family:'Heebo',sans-serif;">V1.8</div>
 
 <!-- Decorative background -->
 <div class="deco-grid"></div>
@@ -3261,6 +3261,34 @@ emailInput.addEventListener('input', () => {
   }
 });
 
+// ID number validation (9 digits for ת.ז., 8-9 for ח.פ)
+function isValidId(v) {
+  const digits = v.replace(/\D/g, '');
+  return digits.length >= 8 && digits.length <= 9;
+}
+const idInput = document.getElementById('customerId');
+idInput.addEventListener('blur', () => validateField(idInput, isValidId));
+idInput.addEventListener('input', () => {
+  if (idInput.closest('.field').classList.contains('field-error')) {
+    validateField(idInput, isValidId);
+  }
+});
+
+// Warn before leaving page if form has data
+let formSubmitted = false;
+window.addEventListener('beforeunload', (e) => {
+  if (formSubmitted) return;
+  const hasName = document.getElementById('customerName').value.trim();
+  const hasPhone = document.getElementById('phone').value.trim();
+  let hasQty = false;
+  document.querySelectorAll('.qty-input').forEach(inp => {
+    if (parseInt(inp.value) > 0) hasQty = true;
+  });
+  if (hasName || hasPhone || hasQty) {
+    e.preventDefault();
+  }
+});
+
 /* ═══════ SUBMIT ═══════ */
 /* ═══════ PROCESS ANIMATION HELPERS ═══════ */
 function setStep(stepNum) {
@@ -3321,6 +3349,14 @@ function launchConfetti() {
 function handleSubmit(e) {
   e.preventDefault();
 
+  // Validate ID number (8-9 digits)
+  const idVal = document.getElementById('customerId').value.replace(/\D/g, '');
+  if (idVal.length < 8 || idVal.length > 9) {
+    alert('מספר ת.ז. / ח.פ לא תקין — יש להזין 9 ספרות (ת.ז.) או 8-9 ספרות (ח.פ)');
+    document.getElementById('customerId').focus();
+    return;
+  }
+
   // Validate phone number (10 digits, optional hyphens)
   const phoneRaw = document.getElementById('phone').value.replace(/-/g, '');
   if (!/^0[2-9]\d{8}$/.test(phoneRaw)) {
@@ -3349,6 +3385,8 @@ function handleSubmit(e) {
   }
 
   // Price validation removed — products may have price 0
+
+  formSubmitted = true;
 
   const btn = document.getElementById('submitBtn');
   btn.disabled = true;
@@ -3791,6 +3829,7 @@ function closeModal() {
   const btn = document.getElementById('submitBtn');
   btn.disabled = false;
   btn.innerHTML = 'שליחת הזמנה <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>';
+  formSubmitted = false;
   console.log('[EIIT] טופס אופס לקליטת הזמנה חדשה');
 }
 
