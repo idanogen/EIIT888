@@ -903,11 +903,6 @@ body {
   background: var(--purple-light);
   color: #fff;
 }
-.qty-stepper .qty-btn.disabled {
-  opacity: 0.3;
-  cursor: default;
-  pointer-events: none;
-}
 .qty-stepper .qty-input {
   width: 42px;
   text-align: center;
@@ -3160,16 +3155,16 @@ function recalc() {
   document.getElementById('advance').textContent = fmt(adv);
 }
 
-document.querySelectorAll('.qty-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const input = btn.closest('.qty-stepper').querySelector('.qty-input');
-    if (input.readOnly) return;
-    let val = parseInt(input.value) || 0;
-    if (btn.classList.contains('qty-plus')) val++;
-    else val = Math.max(0, val - 1);
-    input.value = val;
-    input.dispatchEvent(new Event('input', { bubbles: true }));
-  });
+document.querySelector('.product-table').addEventListener('click', (e) => {
+  const btn = e.target.closest('.qty-btn');
+  if (!btn) return;
+  const input = btn.closest('.qty-stepper').querySelector('.qty-input');
+  if (input.readOnly) return;
+  let val = parseInt(input.value) || 0;
+  if (btn.classList.contains('qty-plus')) val++;
+  else val = Math.max(0, val - 1);
+  input.value = val;
+  input.dispatchEvent(new Event('input', { bubbles: true }));
 });
 
 document.querySelectorAll('.qty-input, .price-input').forEach(input => {
