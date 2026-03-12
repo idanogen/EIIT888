@@ -1146,7 +1146,11 @@ function clearFilters() {
 }
 
 // Attach filter listeners
-document.getElementById('filterSearch').addEventListener('input', applyFilters);
+let searchTimer;
+document.getElementById('filterSearch').addEventListener('input', () => {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(applyFilters, 300);
+});
 document.getElementById('filterDateFrom').addEventListener('change', applyFilters);
 document.getElementById('filterDateTo').addEventListener('change', applyFilters);
 document.getElementById('filterStatus').addEventListener('change', applyFilters);
@@ -1431,11 +1435,18 @@ function generateOrderPDF(order) {
   let y = 48;
   const R = PW - M;
 
-  function txt(str, x, yy, font, color, align) {
+  function txt(str, x, yy, font, color, align, maxW) {
     ctx.font = font;
     ctx.fillStyle = color;
     ctx.textAlign = align || 'right';
-    ctx.fillText(str || '-', x, yy);
+    let s = str || '-';
+    if (maxW) {
+      while (ctx.measureText(s).width > maxW && s.length > 1) {
+        s = s.slice(0, -1);
+      }
+      if (s !== (str || '-')) s += '...';
+    }
+    ctx.fillText(s, x, yy);
   }
   function roundRect(x, yy, w, h, r, color) {
     ctx.fillStyle = color;
@@ -1484,7 +1495,7 @@ function generateOrderPDF(order) {
 
   custPairs.forEach(row => {
     txt(row[0], R - 16, y, '12px Heebo, Arial', '#8C87A0');
-    txt(row[1] || '-', R - 90, y, 'bold 12px Heebo, Arial', '#1A1432');
+    txt(row[1] || '-', R - 90, y, 'bold 12px Heebo, Arial', '#1A1432', 'right', 160);
     if (row[2]) {
       txt(row[2], PW / 2 - 16, y, '12px Heebo, Arial', '#8C87A0');
       txt(row[3] || '-', PW / 2 - 90, y, 'bold 12px Heebo, Arial', '#1A1432');
@@ -1512,7 +1523,7 @@ function generateOrderPDF(order) {
         roundRect(M, y - 2, W, prodRowH, 4, '#FAFAFE');
       }
       const ty = y + 14;
-      txt(p.name || '-', colX[0], ty, '12px Heebo, Arial', '#1A1432');
+      txt(p.name || '-', colX[0], ty, '12px Heebo, Arial', '#1A1432', 'right', 180);
       txt(p.sku || '-', colX[1], ty, '12px Heebo, Arial', '#8C87A0');
       txt(String(p.qty || 0), colX[2], ty, 'bold 12px Heebo, Arial', '#1A1432');
       txt(money(p.price), colX[3], ty, '12px Heebo, Arial', '#4A4560');

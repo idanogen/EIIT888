@@ -2912,37 +2912,54 @@ let selectedCityCode = null;
 
 async function fetchCities() {
   if (citiesCache) return citiesCache;
-  const res = await fetch(`${GOV_API}?resource_id=${CITIES_ID}&limit=1300`);
-  const data = await res.json();
-  const seen = new Set();
-  citiesCache = data.result.records
-    .filter(r => {
-      const name = r['שם_ישוב']?.trim();
-      if (!name || seen.has(r['סמל_ישוב'])) return false;
-      seen.add(r['סמל_ישוב']);
-      return true;
-    })
-    .map(r => ({ code: r['סמל_ישוב'], name: r['שם_ישוב'].trim() }))
-    .sort((a, b) => a.name.localeCompare(b.name, 'he'));
-  return citiesCache;
+  try {
+    const res = await fetch(`${GOV_API}?resource_id=${CITIES_ID}&limit=1300`);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    const seen = new Set();
+    citiesCache = data.result.records
+      .filter(r => {
+        const name = r['שם_ישוב']?.trim();
+        if (!name || seen.has(r['סמל_ישוב'])) return false;
+        seen.add(r['סמל_ישוב']);
+        return true;
+      })
+      .map(r => ({ code: r['סמל_ישוב'], name: r['שם_ישוב'].trim() }))
+      .sort((a, b) => a.name.localeCompare(b.name, 'he'));
+    return citiesCache;
+  } catch (err) {
+    console.error('[EIIT] שגיאה בטעינת ערים:', err);
+    document.getElementById('city').placeholder = 'שגיאה בטעינת ערים — הקלד ידנית';
+    document.getElementById('city').removeAttribute('disabled');
+    return [];
+  }
 }
 
 async function fetchStreets(cityCode) {
   if (streetsCache[cityCode]) return streetsCache[cityCode];
-  const filter = JSON.stringify({ סמל_ישוב: cityCode });
-  const res = await fetch(`${GOV_API}?resource_id=${STREETS_ID}&filters=${encodeURIComponent(filter)}&limit=1000`);
-  const data = await res.json();
-  const seen = new Set();
-  streetsCache[cityCode] = data.result.records
-    .filter(r => {
-      const name = r['שם_רחוב']?.trim();
-      if (!name || seen.has(r['סמל_רחוב'])) return false;
-      seen.add(r['סמל_רחוב']);
-      return true;
-    })
-    .map(r => ({ code: r['סמל_רחוב'], name: r['שם_רחוב'].trim() }))
-    .sort((a, b) => a.name.localeCompare(b.name, 'he'));
-  return streetsCache[cityCode];
+  try {
+    const filter = JSON.stringify({ סמל_ישוב: cityCode });
+    const res = await fetch(`${GOV_API}?resource_id=${STREETS_ID}&filters=${encodeURIComponent(filter)}&limit=1000`);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    const seen = new Set();
+    streetsCache[cityCode] = data.result.records
+      .filter(r => {
+        const name = r['שם_רחוב']?.trim();
+        if (!name || seen.has(r['סמל_רחוב'])) return false;
+        seen.add(r['סמל_רחוב']);
+        return true;
+      })
+      .map(r => ({ code: r['סמל_רחוב'], name: r['שם_רחוב'].trim() }))
+      .sort((a, b) => a.name.localeCompare(b.name, 'he'));
+    return streetsCache[cityCode];
+  } catch (err) {
+    console.error('[EIIT] שגיאה בטעינת רחובות:', err);
+    const streetInput = document.getElementById('street');
+    streetInput.placeholder = 'שגיאה בטעינת רחובות — הקלד ידנית';
+    streetInput.disabled = false;
+    return [];
+  }
 }
 
 // ═══════ AUTOCOMPLETE HELPERS ═══════
@@ -3524,11 +3541,18 @@ function generateOrderPDF(order) {
   let y = 48;
   const R = PW - M;
 
-  function txt(str, x, yy, font, color, align) {
+  function txt(str, x, yy, font, color, align, maxW) {
     ctx.font = font;
     ctx.fillStyle = color;
     ctx.textAlign = align || 'right';
-    ctx.fillText(str || '-', x, yy);
+    let s = str || '-';
+    if (maxW) {
+      while (ctx.measureText(s).width > maxW && s.length > 1) {
+        s = s.slice(0, -1);
+      }
+      if (s !== (str || '-')) s += '...';
+    }
+    ctx.fillText(s, x, yy);
   }
   function roundRect(x, yy, w, h, r, color) {
     ctx.fillStyle = color;
@@ -3580,7 +3604,7 @@ function generateOrderPDF(order) {
 
   custPairs.forEach(row => {
     txt(row[0], R - 16, y, '12px Heebo, Arial', '#8C87A0');
-    txt(row[1] || '-', R - 90, y, 'bold 12px Heebo, Arial', '#1A1432');
+    txt(row[1] || '-', R - 90, y, 'bold 12px Heebo, Arial', '#1A1432', 'right', 160);
     if (row[2]) {
       txt(row[2], PW / 2 - 16, y, '12px Heebo, Arial', '#8C87A0');
       txt(row[3] || '-', PW / 2 - 90, y, 'bold 12px Heebo, Arial', '#1A1432');
@@ -3610,7 +3634,7 @@ function generateOrderPDF(order) {
         roundRect(M, y - 2, W, prodRowH, 4, '#FAFAFE');
       }
       const ty = y + 14;
-      txt(p.name || '-', colX[0], ty, '12px Heebo, Arial', '#1A1432');
+      txt(p.name || '-', colX[0], ty, '12px Heebo, Arial', '#1A1432', 'right', 180);
       txt(p.sku || '-', colX[1], ty, '12px Heebo, Arial', '#8C87A0');
       txt(String(p.qty || 0), colX[2], ty, 'bold 12px Heebo, Arial', '#1A1432');
       txt(money(p.price), colX[3], ty, '12px Heebo, Arial', '#4A4560');
@@ -3759,8 +3783,10 @@ function closeModal() {
   // Reset totals display
   const totalEls = ['subtotalDisplay', 'vatDisplay', 'grandTotalDisplay', 'advanceDisplay'];
   totalEls.forEach(id => { const el = document.getElementById(id); if (el) el.textContent = '₪0'; });
-  // Reset stone color selection
+  // Reset stone color selection and theme
   document.querySelectorAll('input[name="stoneColor"]').forEach(r => r.checked = false);
+  const summaryWrapper = document.querySelector('.summary-wrapper');
+  if (summaryWrapper) summaryWrapper.classList.remove('stone-white', 'stone-gray', 'stone-black');
   // Re-enable submit button
   const btn = document.getElementById('submitBtn');
   btn.disabled = false;
