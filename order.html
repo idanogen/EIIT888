@@ -2194,7 +2194,7 @@ input[type="date"] {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
-<div style="position:fixed;top:8px;left:8px;z-index:9999;background:#503AA8;color:white;font-size:11px;font-weight:700;padding:3px 10px;border-radius:100px;opacity:0.85;font-family:'Heebo',sans-serif;">V0.8</div>
+<div style="position:fixed;top:8px;left:8px;z-index:9999;background:#503AA8;color:white;font-size:11px;font-weight:700;padding:3px 10px;border-radius:100px;opacity:0.85;font-family:'Heebo',sans-serif;">V0.9</div>
 
 <!-- Decorative background -->
 <div class="deco-grid"></div>
@@ -2421,10 +2421,10 @@ input[type="date"] {
                   </div>
                 </td>
                 <td data-label="מחיר יח׳"><input type="number" class="price-input" readonly data-row="4" min="0" placeholder="₪"></td>
-                <td data-label="כמות"><input type="number" class="qty-input" data-row="4" min="0" value="0"></td>
+                <td data-label="כמות"><input type="number" class="qty-input" data-row="4" min="0" value="0" readonly id="fanQty"></td>
                 <td data-label="סה״כ"><span class="line-total" data-total="4">₪ 0</span></td>
               </tr>
-              <tr>
+              <tr data-sku="1009">
                 <td data-label="">
                   <div class="product-name-cell">
                     <div class="product-icon">🗄️</div>
@@ -2432,7 +2432,7 @@ input[type="date"] {
                   </div>
                 </td>
                 <td data-label="מחיר יח׳"><input type="number" class="price-input" readonly data-row="5" min="0" placeholder="₪"></td>
-                <td data-label="כמות"><input type="number" class="qty-input" data-row="5" min="0" value="0"></td>
+                <td data-label="כמות"><input type="number" class="qty-input" data-row="5" min="0" value="0" id="cabinetQty"></td>
                 <td data-label="סה״כ"><span class="line-total" data-total="5">₪ 0</span></td>
               </tr>
               <tr data-sku="1008">
@@ -3045,6 +3045,13 @@ function recalc() {
   const projectorInput = document.getElementById('projectorQty');
   if (projectorInput) {
     projectorInput.value = inductionTotal;
+  }
+
+  // Auto-calc fan qty = cabinet qty (1:1)
+  const cabinetInput = document.getElementById('cabinetQty');
+  const fanInput = document.getElementById('fanQty');
+  if (cabinetInput && fanInput) {
+    fanInput.value = parseInt(cabinetInput.value) || 0;
   }
 
   let subtotal = 0;
