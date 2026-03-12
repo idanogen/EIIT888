@@ -890,6 +890,19 @@ body {
   box-shadow: 0 0 0 4px rgba(80,58,168,0.08);
 }
 
+.product-table input[readonly] {
+  background: var(--cream-dark);
+  color: var(--text-secondary);
+  cursor: default;
+  border-color: transparent;
+}
+
+.product-table input[readonly]:focus {
+  border-color: transparent;
+  box-shadow: none;
+  background: var(--cream-dark);
+}
+
 .price-display {
   font-family: 'Rubik', sans-serif;
   font-weight: 600;
@@ -2181,7 +2194,7 @@ input[type="date"] {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
-<div style="position:fixed;top:8px;left:8px;z-index:9999;background:#503AA8;color:white;font-size:11px;font-weight:700;padding:3px 10px;border-radius:100px;opacity:0.85;font-family:'Heebo',sans-serif;">V0.6</div>
+<div style="position:fixed;top:8px;left:8px;z-index:9999;background:#503AA8;color:white;font-size:11px;font-weight:700;padding:3px 10px;border-radius:100px;opacity:0.85;font-family:'Heebo',sans-serif;">V0.7</div>
 
 <!-- Decorative background -->
 <div class="deco-grid"></div>
@@ -2363,7 +2376,7 @@ input[type="date"] {
                     <div><span class="product-name-text">נקודת אינדוקציה קוטר 18</span><span class="product-sku">מק״ט: 1001</span></div>
                   </div>
                 </td>
-                <td data-label="מחיר יח׳"><input type="number" class="price-input" data-row="0" min="0" value="4661" placeholder="₪"></td>
+                <td data-label="מחיר יח׳"><input type="number" class="price-input" readonly data-row="0" min="0" value="4661" placeholder="₪"></td>
                 <td data-label="כמות"><input type="number" class="qty-input" data-row="0" min="0" value="0"></td>
                 <td data-label="סה״כ"><span class="line-total" data-total="0">₪ 0</span></td>
               </tr>
@@ -2374,7 +2387,7 @@ input[type="date"] {
                     <div><span class="product-name-text">נקודת אינדוקציה קוטר 24</span><span class="product-sku">מק״ט: 1002</span></div>
                   </div>
                 </td>
-                <td data-label="מחיר יח׳"><input type="number" class="price-input" data-row="1" min="0" value="4661" placeholder="₪"></td>
+                <td data-label="מחיר יח׳"><input type="number" class="price-input" readonly data-row="1" min="0" value="4661" placeholder="₪"></td>
                 <td data-label="כמות"><input type="number" class="qty-input" data-row="1" min="0" value="0"></td>
                 <td data-label="סה״כ"><span class="line-total" data-total="1">₪ 0</span></td>
               </tr>
@@ -2385,7 +2398,7 @@ input[type="date"] {
                     <div><span class="product-name-text">נקודת אינדוקציה קוטר 28</span><span class="product-sku">מק״ט: 1003</span></div>
                   </div>
                 </td>
-                <td data-label="מחיר יח׳"><input type="number" class="price-input" data-row="2" min="0" value="4661" placeholder="₪"></td>
+                <td data-label="מחיר יח׳"><input type="number" class="price-input" readonly data-row="2" min="0" value="4661" placeholder="₪"></td>
                 <td data-label="כמות"><input type="number" class="qty-input" data-row="2" min="0" value="0"></td>
                 <td data-label="סה״כ"><span class="line-total" data-total="2">₪ 0</span></td>
               </tr>
@@ -2396,7 +2409,7 @@ input[type="date"] {
                     <div><span class="product-name-text">בקר BT</span><span class="product-sku">מק״ט: 1004</span></div>
                   </div>
                 </td>
-                <td data-label="מחיר יח׳"><input type="number" class="price-input" data-row="3" min="0" value="2288" placeholder="₪"></td>
+                <td data-label="מחיר יח׳"><input type="number" class="price-input" readonly data-row="3" min="0" value="2288" placeholder="₪"></td>
                 <td data-label="כמות"><input type="number" class="qty-input" data-row="3" min="0" value="0"></td>
                 <td data-label="סה״כ"><span class="line-total" data-total="3">₪ 0</span></td>
               </tr>
@@ -2407,7 +2420,7 @@ input[type="date"] {
                     <div><span class="product-name-text">מאוורר</span><span class="product-sku">מק״ט: 1005</span></div>
                   </div>
                 </td>
-                <td data-label="מחיר יח׳"><input type="number" class="price-input" data-row="4" min="0" placeholder="₪"></td>
+                <td data-label="מחיר יח׳"><input type="number" class="price-input" readonly data-row="4" min="0" placeholder="₪"></td>
                 <td data-label="כמות"><input type="number" class="qty-input" data-row="4" min="0" value="0"></td>
                 <td data-label="סה״כ"><span class="line-total" data-total="4">₪ 0</span></td>
               </tr>
@@ -2418,7 +2431,7 @@ input[type="date"] {
                     <div><span class="product-name-text">ארונות עם אינדוקציה</span></div>
                   </div>
                 </td>
-                <td data-label="מחיר יח׳"><input type="number" class="price-input" data-row="5" min="0" placeholder="₪"></td>
+                <td data-label="מחיר יח׳"><input type="number" class="price-input" readonly data-row="5" min="0" placeholder="₪"></td>
                 <td data-label="כמות"><input type="number" class="qty-input" data-row="5" min="0" value="0"></td>
                 <td data-label="סה״כ"><span class="line-total" data-total="5">₪ 0</span></td>
               </tr>
@@ -2429,7 +2442,7 @@ input[type="date"] {
                     <div><span class="product-name-text">מקרן ריצפתי</span><span class="product-sku">מק״ט: 1008</span></div>
                   </div>
                 </td>
-                <td data-label="מחיר יח׳"><input type="number" class="price-input" data-row="6" min="0" placeholder="₪"></td>
+                <td data-label="מחיר יח׳"><input type="number" class="price-input" readonly data-row="6" min="0" placeholder="₪"></td>
                 <td data-label="כמות"><input type="number" class="qty-input" data-row="6" min="0" value="0"></td>
                 <td data-label="סה״כ"><span class="line-total" data-total="6">₪ 0</span></td>
               </tr>
