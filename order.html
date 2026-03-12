@@ -2266,7 +2266,7 @@ input[type="date"] {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
-<div style="position:fixed;top:8px;left:8px;z-index:9999;background:#503AA8;color:white;font-size:11px;font-weight:700;padding:3px 10px;border-radius:100px;opacity:0.85;font-family:'Heebo',sans-serif;">V1.5</div>
+<div style="position:fixed;top:8px;left:8px;z-index:9999;background:#503AA8;color:white;font-size:11px;font-weight:700;padding:3px 10px;border-radius:100px;opacity:0.85;font-family:'Heebo',sans-serif;">V1.6</div>
 
 <!-- Decorative background -->
 <div class="deco-grid"></div>
@@ -3500,11 +3500,6 @@ function generateOrderPDF(order) {
     ctx.textAlign = align || 'right';
     ctx.fillText(str || '-', x, yy);
   }
-  function hline(yy, x1, x2, color, width) {
-    ctx.strokeStyle = color || '#E8E4F0';
-    ctx.lineWidth = width || 1;
-    ctx.beginPath(); ctx.moveTo(x1, yy); ctx.lineTo(x2, yy); ctx.stroke();
-  }
   function roundRect(x, yy, w, h, r, color) {
     ctx.fillStyle = color;
     ctx.beginPath();
@@ -3517,17 +3512,22 @@ function generateOrderPDF(order) {
   }
   function money(n) { return '\u20AA' + Math.round(n || 0).toLocaleString('he-IL'); }
 
+  // ── Header ──
   txt('אינדוקציה כהלכה 888', PW / 2, y, 'bold 24px Heebo, Arial', '#503AA8', 'center');
   y += 22;
   txt('EIIT 888 LTD', PW / 2, y, '600 11px Heebo, Arial', '#C9A84C', 'center');
-  y += 16;
-  hline(y, M, R, '#503AA8', 3);
+  y += 20;
+
+  // Purple accent bar instead of thin line
+  roundRect(PW / 2 - 60, y, 120, 4, 2, '#503AA8');
   y += 28;
+
   txt('\u05D0\u05D9\u05E9\u05D5\u05E8 \u05D4\u05D6\u05DE\u05E0\u05D4 \u05DE\u05E1\u05F3 ' + (order.order_number || ''), PW / 2, y, 'bold 18px Heebo, Arial', '#503AA8', 'center');
   y += 20;
   txt('\u05EA\u05D0\u05E8\u05D9\u05DA: ' + fmtDatePdf(order.order_date), PW / 2, y, '13px Heebo, Arial', '#8C87A0', 'center');
   y += 28;
 
+  // ── Customer Details ──
   const custPairs = [
     ['\u05E9\u05DD:', order.customer_name, '\u05EA.\u05D6 / \u05D7.\u05E4:', order.customer_id],
     ['\u05D8\u05DC\u05E4\u05D5\u05DF:', order.phone, '\u05D0\u05D9\u05DE\u05D9\u05D9\u05DC:', order.email],
@@ -3536,13 +3536,17 @@ function generateOrderPDF(order) {
   if (order.install_date) custPairs.push(['\u05EA\u05D0\u05E8\u05D9\u05DA \u05D4\u05EA\u05E7\u05E0\u05D4:', fmtDatePdf(order.install_date)]);
   if (order.stone_color) custPairs.push(['\u05E6\u05D1\u05E2 \u05E9\u05D9\u05E9:', order.stone_color]);
 
-  const boxH = 36 + custPairs.length * 20;
+  const rowH = 22;
+  const boxPad = 14;
+  const headerH = 28;
+  const boxH = headerH + boxPad + custPairs.length * rowH + boxPad;
   roundRect(M, y, W, boxH, 10, '#F6F3FC');
-  y += 22;
+
+  // Section title with gold accent dot
+  y += 20;
   txt('\u05E4\u05E8\u05D8\u05D9 \u05DC\u05E7\u05D5\u05D7', R - 16, y, 'bold 13px Heebo, Arial', '#503AA8');
-  y += 8;
-  hline(y, M + 16, R - 16, '#EDE8F8', 1);
-  y += 16;
+  roundRect(R - 10, y - 8, 3, 14, 1.5, '#C9A84C');
+  y += headerH;
 
   custPairs.forEach(row => {
     txt(row[0], R - 16, y, '12px Heebo, Arial', '#8C87A0');
@@ -3551,60 +3555,77 @@ function generateOrderPDF(order) {
       txt(row[2], PW / 2 - 16, y, '12px Heebo, Arial', '#8C87A0');
       txt(row[3] || '-', PW / 2 - 90, y, 'bold 12px Heebo, Arial', '#1A1432');
     }
-    y += 20;
+    y += rowH;
   });
-  y += 12;
+  y += 20;
 
+  // ── Products Table ──
   const products = order.products || [];
   if (products.length > 0) {
     txt('\u05E4\u05D9\u05E8\u05D5\u05D8 \u05DE\u05D5\u05E6\u05E8\u05D9\u05DD', R, y, 'bold 14px Heebo, Arial', '#503AA8');
-    y += 18;
-    ctx.fillStyle = '#EDE8F8';
-    ctx.fillRect(M, y - 4, W, 24);
+    roundRect(R + 6, y - 8, 3, 14, 1.5, '#C9A84C');
+    y += 20;
+
+    // Table header row
+    const thH = 26;
+    roundRect(M, y, W, thH, 6, '#EDE8F8');
     const colX = [R - 10, R - 200, R - 290, R - 350, R - 430];
-    ['\u05DE\u05D5\u05E6\u05E8', '\u05DE\u05E7\u05F4\u05D8', '\u05DB\u05DE\u05D5\u05EA', '\u05DE\u05D7\u05D9\u05E8', '\u05E1\u05D4\u05F4\u05DB'].forEach((h, i) => txt(h, colX[i], y + 12, 'bold 11px Heebo, Arial', '#503AA8'));
-    y += 28;
-    products.forEach(p => {
-      txt(p.name || '-', colX[0], y, '12px Heebo, Arial', '#1A1432');
-      txt(p.sku || '-', colX[1], y, '12px Heebo, Arial', '#1A1432');
-      txt(String(p.qty || 0), colX[2], y, '12px Heebo, Arial', '#1A1432');
-      txt(money(p.price), colX[3], y, '12px Heebo, Arial', '#1A1432');
-      txt(money(p.total || (p.price||0)*(p.qty||0)), colX[4], y, 'bold 12px Heebo, Arial', '#1A1432');
-      y += 22;
-      hline(y - 8, M, R, '#E8E4F0', 0.5);
+    ['\u05DE\u05D5\u05E6\u05E8', '\u05DE\u05E7\u05F4\u05D8', '\u05DB\u05DE\u05D5\u05EA', '\u05DE\u05D7\u05D9\u05E8', '\u05E1\u05D4\u05F4\u05DB'].forEach((h, i) => txt(h, colX[i], y + 17, 'bold 11px Heebo, Arial', '#503AA8'));
+    y += thH + 4;
+
+    // Product rows with alternating backgrounds
+    const prodRowH = 24;
+    products.forEach((p, idx) => {
+      if (idx % 2 === 0) {
+        roundRect(M, y - 2, W, prodRowH, 4, '#FAFAFE');
+      }
+      const ty = y + 14;
+      txt(p.name || '-', colX[0], ty, '12px Heebo, Arial', '#1A1432');
+      txt(p.sku || '-', colX[1], ty, '12px Heebo, Arial', '#8C87A0');
+      txt(String(p.qty || 0), colX[2], ty, 'bold 12px Heebo, Arial', '#1A1432');
+      txt(money(p.price), colX[3], ty, '12px Heebo, Arial', '#4A4560');
+      txt(money(p.total || (p.price||0)*(p.qty||0)), colX[4], ty, 'bold 12px Heebo, Arial', '#503AA8');
+      y += prodRowH;
     });
-    y += 8;
+    y += 14;
   }
 
-  roundRect(M, y, W, 104, 10, '#F8F5F0');
-  y += 22;
+  // ── Totals ──
+  const totalsH = 108;
+  roundRect(M, y, W, totalsH, 10, '#F8F5F0');
+  y += 24;
   function totalRow(label, val, grand) {
     const f = grand ? 'bold 16px Heebo, Arial' : '13px Heebo, Arial';
     const c = grand ? '#503AA8' : '#4A4560';
     txt(label, R - 20, y, f, c);
     txt(val, M + 20, y, f, c, 'left');
-    y += grand ? 26 : 20;
+    y += grand ? 28 : 22;
   }
   totalRow('\u05E1\u05DB\u05D5\u05DD \u05D1\u05D9\u05E0\u05D9\u05D9\u05DD', money(order.subtotal));
   totalRow('\u05DE\u05E2\u05F4\u05DE (18%)', money(order.vat));
-  hline(y - 8, M + 20, R - 20, '#E8E4F0', 1.5);
+
+  // Subtle dot separator instead of line
+  roundRect(M + 40, y - 10, W - 80, 2, 1, '#E8E4F0');
+  y += 4;
+
   totalRow('\u05E1\u05D4\u05F4\u05DB \u05DC\u05EA\u05E9\u05DC\u05D5\u05DD', money(order.grand_total), true);
   totalRow('\u05DE\u05E7\u05D3\u05DE\u05D4 (50%)', money(order.advance));
   y += 8;
 
+  // ── Notes ──
   if (order.notes) {
-    const noteH = 44;
+    const noteH = 48;
     roundRect(M, y, W, noteH, 8, '#FBF6E8');
-    ctx.fillStyle = '#C9A84C';
-    ctx.fillRect(R, y, 3, noteH);
-    txt('\u05D4\u05E2\u05E8\u05D5\u05EA:', R - 12, y + 18, 'bold 11px Heebo, Arial', '#8C87A0');
-    txt(order.notes, R - 12, y + 34, '12px Heebo, Arial', '#1A1432');
-    y += noteH + 8;
+    roundRect(R, y, 4, noteH, 2, '#C9A84C');
+    txt('\u05D4\u05E2\u05E8\u05D5\u05EA:', R - 14, y + 20, 'bold 11px Heebo, Arial', '#8C87A0');
+    txt(order.notes, R - 14, y + 36, '12px Heebo, Arial', '#1A1432');
+    y += noteH + 12;
   }
 
+  // ── Footer ──
   const footerY = Math.max(y + 24, PH - 40);
-  hline(footerY, M, R, '#E8E4F0', 1);
-  txt('\u05EA\u05D5\u05D3\u05D4 \u05E9\u05D1\u05D7\u05E8\u05EA\u05DD \u05D1\u05D0\u05D9\u05E0\u05D3\u05D5\u05E7\u05E6\u05D9\u05D4 \u05DB\u05D4\u05DC\u05DB\u05D4 888', PW / 2, footerY + 18, '11px Heebo, Arial', '#8C87A0', 'center');
+  roundRect(PW / 2 - 80, footerY - 4, 160, 2, 1, '#E8E4F0');
+  txt('\u05EA\u05D5\u05D3\u05D4 \u05E9\u05D1\u05D7\u05E8\u05EA\u05DD \u05D1\u05D0\u05D9\u05E0\u05D3\u05D5\u05E7\u05E6\u05D9\u05D4 \u05DB\u05D4\u05DC\u05DB\u05D4 888', PW / 2, footerY + 16, '11px Heebo, Arial', '#8C87A0', 'center');
 
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ unit: 'pt', format: 'a4' });
