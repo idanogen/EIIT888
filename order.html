@@ -3232,6 +3232,14 @@ function launchConfetti() {
 function handleSubmit(e) {
   e.preventDefault();
 
+  // Validate phone number (10 digits, optional hyphens)
+  const phoneRaw = document.getElementById('phone').value.replace(/-/g, '');
+  if (!/^0[2-9]\d{7,8}$/.test(phoneRaw)) {
+    alert('מספר טלפון לא תקין — יש להזין מספר ישראלי (לדוגמה: 052-3694547)');
+    document.getElementById('phone').focus();
+    return;
+  }
+
   // Validate stone color selection
   if (!document.querySelector('input[name="stoneColor"]:checked')) {
     alert('יש לבחור גוון שיש');
