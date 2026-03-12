@@ -2194,7 +2194,7 @@ input[type="date"] {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
-<div style="position:fixed;top:8px;left:8px;z-index:9999;background:#503AA8;color:white;font-size:11px;font-weight:700;padding:3px 10px;border-radius:100px;opacity:0.85;font-family:'Heebo',sans-serif;">V1.0</div>
+<div style="position:fixed;top:8px;left:8px;z-index:9999;background:#503AA8;color:white;font-size:11px;font-weight:700;padding:3px 10px;border-radius:100px;opacity:0.85;font-family:'Heebo',sans-serif;">V1.1</div>
 
 <!-- Decorative background -->
 <div class="deco-grid"></div>
@@ -2424,8 +2424,8 @@ input[type="date"] {
                     <div><span class="product-name-text">מאוורר</span><span class="product-sku">מק״ט: 1005</span></div>
                   </div>
                 </td>
-                <td data-label="מחיר יח׳"><input type="number" class="price-input" readonly data-row="4" min="0" placeholder="₪"></td>
-                <td data-label="כמות"><input type="number" class="qty-input" data-row="4" min="0" value="0" readonly id="fanQty"></td>
+                <td data-label="מחיר יח׳"><span class="price-display" style="opacity:0.4">0</span></td>
+                <td data-label="כמות"><input type="number" class="qty-input" data-row="4" min="0" value="0" readonly id="fanQty" data-free="true"></td>
                 <td data-label="סה״כ"><span class="line-total" data-total="4">₪ 0</span></td>
               </tr>
               <tr data-sku="1009">
@@ -2435,8 +2435,8 @@ input[type="date"] {
                     <div><span class="product-name-text">ארונות עם אינדוקציה</span></div>
                   </div>
                 </td>
-                <td data-label="מחיר יח׳"><input type="number" class="price-input" readonly data-row="5" min="0" placeholder="₪"></td>
-                <td data-label="כמות"><input type="number" class="qty-input" data-row="5" min="0" value="0" id="cabinetQty"></td>
+                <td data-label="מחיר יח׳"><span class="price-display" style="opacity:0.4">0</span></td>
+                <td data-label="כמות"><input type="number" class="qty-input" data-row="5" min="0" value="0" id="cabinetQty" data-free="true"></td>
                 <td data-label="סה״כ"><span class="line-total" data-total="5">₪ 0</span></td>
               </tr>
               <tr data-sku="1008">
@@ -2446,8 +2446,8 @@ input[type="date"] {
                     <div><span class="product-name-text">מקרן ריצפתי</span><span class="product-sku">מק״ט: 1008</span></div>
                   </div>
                 </td>
-                <td data-label="מחיר יח׳"><input type="number" class="price-input" readonly data-row="6" min="0" placeholder="₪"></td>
-                <td data-label="כמות"><input type="number" class="qty-input" data-row="6" min="0" value="0" readonly id="projectorQty"></td>
+                <td data-label="מחיר יח׳"><span class="price-display" style="opacity:0.4">0</span></td>
+                <td data-label="כמות"><input type="number" class="qty-input" data-row="6" min="0" value="0" readonly id="projectorQty" data-free="true"></td>
                 <td data-label="סה״כ"><span class="line-total" data-total="6">₪ 0</span></td>
               </tr>
               <tr data-sku="1006">
@@ -2458,7 +2458,7 @@ input[type="date"] {
                     <span class="free-tag">✓ ללא עלות</span>
                   </div>
                 </td>
-                <td data-label="מחיר יח׳"><span class="price-display" style="opacity:0.4">₪ 0</span></td>
+                <td data-label="מחיר יח׳"><span class="price-display" style="opacity:0.4">0</span></td>
                 <td data-label="כמות"><input type="number" class="qty-input" data-row="7" data-free="true" min="0" value="0"></td>
                 <td data-label="סה״כ"><span class="line-total">₪ 0</span></td>
               </tr>
@@ -2470,7 +2470,7 @@ input[type="date"] {
                     <span class="free-tag">✓ ללא עלות</span>
                   </div>
                 </td>
-                <td data-label="מחיר יח׳"><span class="price-display" style="opacity:0.4">₪ 0</span></td>
+                <td data-label="מחיר יח׳"><span class="price-display" style="opacity:0.4">0</span></td>
                 <td data-label="כמות"><input type="number" class="qty-input" data-row="8" data-free="true" min="0" value="0"></td>
                 <td data-label="סה״כ"><span class="line-total">₪ 0</span></td>
               </tr>
@@ -3175,21 +3175,7 @@ function handleSubmit(e) {
     return;
   }
 
-  // Validate prices for selected products
-  let missingPrice = false;
-  document.querySelectorAll('.product-table tbody tr').forEach(row => {
-    const qtyInput = row.querySelector('.qty-input');
-    const priceInput = row.querySelector('.price-input');
-    const qty = parseInt(qtyInput?.value) || 0;
-    if (qty > 0 && priceInput && (!priceInput.value || parseFloat(priceInput.value) <= 0) && !row.dataset.free) {
-      missingPrice = true;
-    }
-  });
-  if (missingPrice) {
-    alert('יש להזין מחיר לכל מוצר שנבחר');
-    document.querySelector('.product-table').scrollIntoView({ behavior: 'smooth', block: 'center' });
-    return;
-  }
+  // Price validation removed — products may have price 0
 
   const btn = document.getElementById('submitBtn');
   btn.disabled = true;
