@@ -2054,10 +2054,10 @@ input[type="date"] {
 }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"></script>
 </head>
 <body>
-<div style="position:fixed;top:8px;left:8px;z-index:9999;background:#503AA8;color:white;font-size:11px;font-weight:700;padding:3px 10px;border-radius:100px;opacity:0.85;font-family:'Heebo',sans-serif;">V0.2</div>
+<div style="position:fixed;top:8px;left:8px;z-index:9999;background:#503AA8;color:white;font-size:11px;font-weight:700;padding:3px 10px;border-radius:100px;opacity:0.85;font-family:'Heebo',sans-serif;">V0.3</div>
 
 <!-- Decorative background -->
 <div class="deco-grid"></div>
@@ -3062,87 +3062,139 @@ function fmtDatePdf(dateStr) {
   return d.toLocaleDateString('he-IL', { day: '2-digit', month: '2-digit', year: 'numeric' });
 }
 
-function buildOrderPDFHtml(order) {
-  const products = order.products || [];
-  let productsRows = products.map(p => `
-    <tr>
-      <td style="padding:8px 12px;border-bottom:1px solid #E8E4F0;font-size:13px;">${p.name || '-'}</td>
-      <td style="padding:8px 12px;border-bottom:1px solid #E8E4F0;font-size:13px;">${p.sku || '-'}</td>
-      <td style="padding:8px 12px;border-bottom:1px solid #E8E4F0;font-size:13px;text-align:center;">${p.qty || 0}</td>
-      <td style="padding:8px 12px;border-bottom:1px solid #E8E4F0;font-size:13px;">₪${Math.round(p.price || 0).toLocaleString('he-IL')}</td>
-      <td style="padding:8px 12px;border-bottom:1px solid #E8E4F0;font-size:13px;font-weight:600;">₪${Math.round(p.total || (p.price||0)*(p.qty||0)).toLocaleString('he-IL')}</td>
-    </tr>
-  `).join('');
+function generateOrderPDF(order) {
+  const scale = 2;
+  const PW = 595;
+  const PH = 842;
+  const M = 40;
+  const W = PW - 2 * M;
+  const canvas = document.createElement('canvas');
+  canvas.width = PW * scale;
+  canvas.height = PH * scale;
+  const ctx = canvas.getContext('2d');
+  ctx.scale(scale, scale);
+  ctx.fillStyle = '#FFFFFF';
+  ctx.fillRect(0, 0, PW, PH);
 
-  return `
-    <div style="direction:rtl;font-family:Arial,Heebo,sans-serif;padding:40px;width:595px;color:#1A1432;background:white;">
-      <div style="text-align:center;margin-bottom:24px;padding-bottom:20px;border-bottom:3px solid #503AA8;">
-        <h1 style="color:#503AA8;font-size:26px;margin:0 0 4px;">אינדוקציה כהלכה 888</h1>
-        <p style="color:#C9A84C;font-size:11px;letter-spacing:3px;margin:0;">EIIT 888 LTD</p>
-      </div>
-      <div style="text-align:center;margin-bottom:24px;">
-        <h2 style="font-size:20px;color:#503AA8;margin:0;">אישור הזמנה מס׳ ${order.order_number || ''}</h2>
-        <p style="font-size:13px;color:#8C87A0;margin:6px 0 0;">תאריך: ${fmtDatePdf(order.order_date)}</p>
-      </div>
-      <div style="background:#F6F3FC;border-radius:10px;padding:16px 20px;margin-bottom:20px;">
-        <h3 style="font-size:14px;color:#503AA8;margin:0 0 10px;border-bottom:1px solid #EDE8F8;padding-bottom:8px;">פרטי לקוח</h3>
-        <table style="width:100%;border-collapse:collapse;">
-          <tr>
-            <td style="padding:4px 0;font-size:13px;color:#8C87A0;width:100px;">שם:</td>
-            <td style="padding:4px 0;font-size:13px;font-weight:600;">${order.customer_name || '-'}</td>
-            <td style="padding:4px 0;font-size:13px;color:#8C87A0;width:100px;">ת.ז / ח.פ:</td>
-            <td style="padding:4px 0;font-size:13px;font-weight:600;">${order.customer_id || '-'}</td>
-          </tr>
-          <tr>
-            <td style="padding:4px 0;font-size:13px;color:#8C87A0;">טלפון:</td>
-            <td style="padding:4px 0;font-size:13px;font-weight:600;">${order.phone || '-'}</td>
-            <td style="padding:4px 0;font-size:13px;color:#8C87A0;">אימייל:</td>
-            <td style="padding:4px 0;font-size:13px;font-weight:600;">${order.email || '-'}</td>
-          </tr>
-          <tr>
-            <td style="padding:4px 0;font-size:13px;color:#8C87A0;">כתובת:</td>
-            <td colspan="3" style="padding:4px 0;font-size:13px;font-weight:600;">${[order.street, order.city, order.floor ? 'קומה ' + order.floor : ''].filter(Boolean).join(', ') || '-'}</td>
-          </tr>
-          ${order.install_date ? `<tr><td style="padding:4px 0;font-size:13px;color:#8C87A0;">תאריך התקנה:</td><td colspan="3" style="padding:4px 0;font-size:13px;font-weight:600;">${fmtDatePdf(order.install_date)}</td></tr>` : ''}
-          ${order.stone_color ? `<tr><td style="padding:4px 0;font-size:13px;color:#8C87A0;">צבע שיש:</td><td colspan="3" style="padding:4px 0;font-size:13px;font-weight:600;">${order.stone_color}</td></tr>` : ''}
-        </table>
-      </div>
-      ${products.length > 0 ? `
-      <h3 style="font-size:14px;color:#503AA8;margin:0 0 10px;">פירוט מוצרים</h3>
-      <table style="width:100%;border-collapse:collapse;margin-bottom:20px;">
-        <thead><tr style="background:#EDE8F8;">
-          <th style="padding:10px 12px;font-size:12px;color:#503AA8;text-align:right;font-weight:700;">מוצר</th>
-          <th style="padding:10px 12px;font-size:12px;color:#503AA8;text-align:right;font-weight:700;">מק״ט</th>
-          <th style="padding:10px 12px;font-size:12px;color:#503AA8;text-align:center;font-weight:700;">כמות</th>
-          <th style="padding:10px 12px;font-size:12px;color:#503AA8;text-align:right;font-weight:700;">מחיר</th>
-          <th style="padding:10px 12px;font-size:12px;color:#503AA8;text-align:right;font-weight:700;">סה״כ</th>
-        </tr></thead>
-        <tbody>${productsRows}</tbody>
-      </table>` : ''}
-      <table style="width:100%;border-collapse:collapse;background:#F8F5F0;border-radius:10px;padding:16px 20px;">
-        <tr>
-          <td style="padding:6px 20px;font-size:14px;color:#4A4560;text-align:right;">סכום ביניים</td>
-          <td style="padding:6px 20px;font-size:14px;color:#4A4560;text-align:left;">₪${Math.round(order.subtotal || 0).toLocaleString('he-IL')}</td>
-        </tr>
-        <tr>
-          <td style="padding:6px 20px;font-size:14px;color:#4A4560;text-align:right;">מע״מ (18%)</td>
-          <td style="padding:6px 20px;font-size:14px;color:#4A4560;text-align:left;">₪${Math.round(order.vat || 0).toLocaleString('he-IL')}</td>
-        </tr>
-        <tr style="border-top:2px solid #E8E4F0;">
-          <td style="padding:10px 20px 6px;font-size:18px;font-weight:700;color:#503AA8;text-align:right;">סה״כ לתשלום</td>
-          <td style="padding:10px 20px 6px;font-size:18px;font-weight:700;color:#503AA8;text-align:left;">₪${Math.round(order.grand_total || 0).toLocaleString('he-IL')}</td>
-        </tr>
-        <tr>
-          <td style="padding:6px 20px;font-size:14px;color:#4A4560;text-align:right;">מקדמה (50%)</td>
-          <td style="padding:6px 20px;font-size:14px;color:#4A4560;text-align:left;">₪${Math.round(order.advance || 0).toLocaleString('he-IL')}</td>
-        </tr>
-      </table>
-      ${order.notes ? `<div style="margin-top:16px;padding:12px 16px;background:#FBF6E8;border-radius:8px;border-right:3px solid #C9A84C;"><p style="font-size:12px;color:#8C87A0;margin:0 0 4px;font-weight:600;">הערות:</p><p style="font-size:13px;margin:0;color:#1A1432;">${order.notes}</p></div>` : ''}
-      <div style="text-align:center;margin-top:30px;padding-top:16px;border-top:1px solid #E8E4F0;">
-        <p style="font-size:11px;color:#8C87A0;margin:0;">תודה שבחרתם באינדוקציה כהלכה 888</p>
-      </div>
-    </div>
-  `;
+  let y = 48;
+  const R = PW - M;
+
+  function txt(str, x, yy, font, color, align) {
+    ctx.font = font;
+    ctx.fillStyle = color;
+    ctx.textAlign = align || 'right';
+    ctx.fillText(str || '-', x, yy);
+  }
+  function hline(yy, x1, x2, color, width) {
+    ctx.strokeStyle = color || '#E8E4F0';
+    ctx.lineWidth = width || 1;
+    ctx.beginPath(); ctx.moveTo(x1, yy); ctx.lineTo(x2, yy); ctx.stroke();
+  }
+  function roundRect(x, yy, w, h, r, color) {
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.moveTo(x + r, yy); ctx.lineTo(x + w - r, yy);
+    ctx.quadraticCurveTo(x + w, yy, x + w, yy + r); ctx.lineTo(x + w, yy + h - r);
+    ctx.quadraticCurveTo(x + w, yy + h, x + w - r, yy + h); ctx.lineTo(x + r, yy + h);
+    ctx.quadraticCurveTo(x, yy + h, x, yy + h - r); ctx.lineTo(x, yy + r);
+    ctx.quadraticCurveTo(x, yy, x + r, yy);
+    ctx.closePath(); ctx.fill();
+  }
+  function money(n) { return '\u20AA' + Math.round(n || 0).toLocaleString('he-IL'); }
+
+  txt('אינדוקציה כהלכה 888', PW / 2, y, 'bold 24px Heebo, Arial', '#503AA8', 'center');
+  y += 22;
+  txt('EIIT 888 LTD', PW / 2, y, '600 11px Heebo, Arial', '#C9A84C', 'center');
+  y += 16;
+  hline(y, M, R, '#503AA8', 3);
+  y += 28;
+  txt('\u05D0\u05D9\u05E9\u05D5\u05E8 \u05D4\u05D6\u05DE\u05E0\u05D4 \u05DE\u05E1\u05F3 ' + (order.order_number || ''), PW / 2, y, 'bold 18px Heebo, Arial', '#503AA8', 'center');
+  y += 20;
+  txt('\u05EA\u05D0\u05E8\u05D9\u05DA: ' + fmtDatePdf(order.order_date), PW / 2, y, '13px Heebo, Arial', '#8C87A0', 'center');
+  y += 28;
+
+  const custPairs = [
+    ['\u05E9\u05DD:', order.customer_name, '\u05EA.\u05D6 / \u05D7.\u05E4:', order.customer_id],
+    ['\u05D8\u05DC\u05E4\u05D5\u05DF:', order.phone, '\u05D0\u05D9\u05DE\u05D9\u05D9\u05DC:', order.email],
+    ['\u05DB\u05EA\u05D5\u05D1\u05EA:', [order.street, order.city, order.floor ? '\u05E7\u05D5\u05DE\u05D4 ' + order.floor : ''].filter(Boolean).join(', ')],
+  ];
+  if (order.install_date) custPairs.push(['\u05EA\u05D0\u05E8\u05D9\u05DA \u05D4\u05EA\u05E7\u05E0\u05D4:', fmtDatePdf(order.install_date)]);
+  if (order.stone_color) custPairs.push(['\u05E6\u05D1\u05E2 \u05E9\u05D9\u05E9:', order.stone_color]);
+
+  const boxH = 36 + custPairs.length * 20;
+  roundRect(M, y, W, boxH, 10, '#F6F3FC');
+  y += 22;
+  txt('\u05E4\u05E8\u05D8\u05D9 \u05DC\u05E7\u05D5\u05D7', R - 16, y, 'bold 13px Heebo, Arial', '#503AA8');
+  y += 8;
+  hline(y, M + 16, R - 16, '#EDE8F8', 1);
+  y += 16;
+
+  custPairs.forEach(row => {
+    txt(row[0], R - 16, y, '12px Heebo, Arial', '#8C87A0');
+    txt(row[1] || '-', R - 90, y, 'bold 12px Heebo, Arial', '#1A1432');
+    if (row[2]) {
+      txt(row[2], PW / 2 - 16, y, '12px Heebo, Arial', '#8C87A0');
+      txt(row[3] || '-', PW / 2 - 90, y, 'bold 12px Heebo, Arial', '#1A1432');
+    }
+    y += 20;
+  });
+  y += 12;
+
+  const products = order.products || [];
+  if (products.length > 0) {
+    txt('\u05E4\u05D9\u05E8\u05D5\u05D8 \u05DE\u05D5\u05E6\u05E8\u05D9\u05DD', R, y, 'bold 14px Heebo, Arial', '#503AA8');
+    y += 18;
+    ctx.fillStyle = '#EDE8F8';
+    ctx.fillRect(M, y - 4, W, 24);
+    const colX = [R - 10, R - 200, R - 290, R - 350, R - 430];
+    ['\u05DE\u05D5\u05E6\u05E8', '\u05DE\u05E7\u05F4\u05D8', '\u05DB\u05DE\u05D5\u05EA', '\u05DE\u05D7\u05D9\u05E8', '\u05E1\u05D4\u05F4\u05DB'].forEach((h, i) => txt(h, colX[i], y + 12, 'bold 11px Heebo, Arial', '#503AA8'));
+    y += 28;
+    products.forEach(p => {
+      txt(p.name || '-', colX[0], y, '12px Heebo, Arial', '#1A1432');
+      txt(p.sku || '-', colX[1], y, '12px Heebo, Arial', '#1A1432');
+      txt(String(p.qty || 0), colX[2], y, '12px Heebo, Arial', '#1A1432');
+      txt(money(p.price), colX[3], y, '12px Heebo, Arial', '#1A1432');
+      txt(money(p.total || (p.price||0)*(p.qty||0)), colX[4], y, 'bold 12px Heebo, Arial', '#1A1432');
+      y += 22;
+      hline(y - 8, M, R, '#E8E4F0', 0.5);
+    });
+    y += 8;
+  }
+
+  roundRect(M, y, W, 104, 10, '#F8F5F0');
+  y += 22;
+  function totalRow(label, val, grand) {
+    const f = grand ? 'bold 16px Heebo, Arial' : '13px Heebo, Arial';
+    const c = grand ? '#503AA8' : '#4A4560';
+    txt(label, R - 20, y, f, c);
+    txt(val, M + 20, y, f, c, 'left');
+    y += grand ? 26 : 20;
+  }
+  totalRow('\u05E1\u05DB\u05D5\u05DD \u05D1\u05D9\u05E0\u05D9\u05D9\u05DD', money(order.subtotal));
+  totalRow('\u05DE\u05E2\u05F4\u05DE (18%)', money(order.vat));
+  hline(y - 8, M + 20, R - 20, '#E8E4F0', 1.5);
+  totalRow('\u05E1\u05D4\u05F4\u05DB \u05DC\u05EA\u05E9\u05DC\u05D5\u05DD', money(order.grand_total), true);
+  totalRow('\u05DE\u05E7\u05D3\u05DE\u05D4 (50%)', money(order.advance));
+  y += 8;
+
+  if (order.notes) {
+    const noteH = 44;
+    roundRect(M, y, W, noteH, 8, '#FBF6E8');
+    ctx.fillStyle = '#C9A84C';
+    ctx.fillRect(R, y, 3, noteH);
+    txt('\u05D4\u05E2\u05E8\u05D5\u05EA:', R - 12, y + 18, 'bold 11px Heebo, Arial', '#8C87A0');
+    txt(order.notes, R - 12, y + 34, '12px Heebo, Arial', '#1A1432');
+    y += noteH + 8;
+  }
+
+  const footerY = Math.max(y + 24, PH - 40);
+  hline(footerY, M, R, '#E8E4F0', 1);
+  txt('\u05EA\u05D5\u05D3\u05D4 \u05E9\u05D1\u05D7\u05E8\u05EA\u05DD \u05D1\u05D0\u05D9\u05E0\u05D3\u05D5\u05E7\u05E6\u05D9\u05D4 \u05DB\u05D4\u05DC\u05DB\u05D4 888', PW / 2, footerY + 18, '11px Heebo, Arial', '#8C87A0', 'center');
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+  doc.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, PW, PH);
+  return doc.output('blob');
 }
 
 function formatPhoneForWhatsApp(phone) {
@@ -3162,29 +3214,7 @@ async function shareLastOrderOnWhatsApp() {
   btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="20" height="20" style="animation:spin 1s linear infinite"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg> מכין PDF...';
 
   try {
-    const htmlContent = buildOrderPDFHtml(order);
-    const container = document.createElement('div');
-    container.style.position = 'absolute';
-    container.style.left = '0';
-    container.style.top = '0';
-    container.style.width = '595px';
-    container.style.zIndex = '-9999';
-    container.innerHTML = htmlContent;
-    document.body.appendChild(container);
-
-    // Wait for browser to fully render the element
-    await new Promise(resolve => {
-      requestAnimationFrame(() => setTimeout(resolve, 200));
-    });
-
-    const pdfBlob = await html2pdf().from(container).set({
-      margin: 0,
-      filename: `order-${order.order_number}.pdf`,
-      html2canvas: { scale: 2, useCORS: true, logging: false, width: 595, scrollY: 0, windowWidth: 595 },
-      jsPDF: { unit: 'pt', format: 'a4', orientation: 'portrait' }
-    }).outputPdf('blob');
-
-    document.body.removeChild(container);
+    const pdfBlob = generateOrderPDF(order);
 
     btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="20" height="20" style="animation:spin 1s linear infinite"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg> מעלה PDF...';
 
