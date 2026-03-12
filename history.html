@@ -1531,7 +1531,7 @@ async function shareOrderOnWhatsApp(orderId) {
 
     // Open WhatsApp
     const phone = formatPhoneForWhatsApp(order.phone);
-    const message = `שלום ${order.customer_name || ''},\n\nמצורף אישור הזמנה מס׳ *${order.order_number}* מאינדוקציה כהלכה 888.\n\n📄 קישור לצפייה בתעודה:\n${pdfUrl}\n\nתודה רבה! 🙏`;
+    const message = `שלום ${order.customer_name || ''},\n\nמצורף אישור הזמנה מס׳ *${order.order_number}* מאינדוקציה כהלכה 888.\n\nקישור לצפייה בתעודה:\n${pdfUrl}\n\n*חשוב! יש לציין את מספר ההזמנה ${order.order_number} בהערות של ההעברה הבנקאית.*\n\nתודה רבה!`;
     const waUrl = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
     window.open(waUrl, '_blank');
 
