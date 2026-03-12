@@ -2194,7 +2194,7 @@ input[type="date"] {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
-<div style="position:fixed;top:8px;left:8px;z-index:9999;background:#503AA8;color:white;font-size:11px;font-weight:700;padding:3px 10px;border-radius:100px;opacity:0.85;font-family:'Heebo',sans-serif;">V0.7</div>
+<div style="position:fixed;top:8px;left:8px;z-index:9999;background:#503AA8;color:white;font-size:11px;font-weight:700;padding:3px 10px;border-radius:100px;opacity:0.85;font-family:'Heebo',sans-serif;">V0.8</div>
 
 <!-- Decorative background -->
 <div class="deco-grid"></div>
@@ -2443,7 +2443,7 @@ input[type="date"] {
                   </div>
                 </td>
                 <td data-label="מחיר יח׳"><input type="number" class="price-input" readonly data-row="6" min="0" placeholder="₪"></td>
-                <td data-label="כמות"><input type="number" class="qty-input" data-row="6" min="0" value="0"></td>
+                <td data-label="כמות"><input type="number" class="qty-input" data-row="6" min="0" value="0" readonly id="projectorQty"></td>
                 <td data-label="סה״כ"><span class="line-total" data-total="6">₪ 0</span></td>
               </tr>
               <tr data-sku="1006">
@@ -3033,6 +3033,20 @@ function fmt(n) {
 }
 
 function recalc() {
+  // Auto-calc projector qty = sum of induction points (1001 + 1002 + 1003)
+  let inductionTotal = 0;
+  ['1001', '1002', '1003'].forEach(sku => {
+    const row = document.querySelector(`tr[data-sku="${sku}"]`);
+    if (row) {
+      const q = parseInt(row.querySelector('.qty-input')?.value) || 0;
+      inductionTotal += q;
+    }
+  });
+  const projectorInput = document.getElementById('projectorQty');
+  if (projectorInput) {
+    projectorInput.value = inductionTotal;
+  }
+
   let subtotal = 0;
 
   document.querySelectorAll('.product-table tbody tr').forEach(row => {
