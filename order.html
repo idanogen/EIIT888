@@ -637,6 +637,130 @@ body {
   line-height: 1.7;
 }
 
+/* ═══════ AUTOCOMPLETE DROPDOWN ═══════ */
+.autocomplete-wrapper {
+  position: relative;
+}
+.autocomplete-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-faint);
+  pointer-events: none;
+  transition: color 0.3s var(--ease);
+}
+.autocomplete-field:focus-within .autocomplete-icon {
+  color: var(--purple);
+}
+.autocomplete-wrapper input {
+  padding-left: 40px;
+}
+.autocomplete-wrapper input:disabled {
+  background: var(--marble-2);
+  color: var(--text-faint);
+  cursor: not-allowed;
+}
+.autocomplete-dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  left: 0;
+  background: white;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  max-height: 220px;
+  overflow-y: auto;
+  z-index: 100;
+  animation: acDropIn 0.2s var(--ease);
+}
+.autocomplete-dropdown.open {
+  display: block;
+}
+@keyframes acDropIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.autocomplete-dropdown::-webkit-scrollbar {
+  width: 6px;
+}
+.autocomplete-dropdown::-webkit-scrollbar-track {
+  background: transparent;
+}
+.autocomplete-dropdown::-webkit-scrollbar-thumb {
+  background: var(--purple-mist);
+  border-radius: 3px;
+}
+.ac-item {
+  padding: 11px 16px;
+  font-size: 14px;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.15s var(--ease);
+  border-bottom: 1px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.ac-item:last-child {
+  border-bottom: none;
+}
+.ac-item:hover,
+.ac-item.ac-active {
+  background: var(--purple-ghost);
+  color: var(--purple);
+}
+.ac-item.selected {
+  background: var(--purple-mist);
+  color: var(--purple);
+  font-weight: 600;
+}
+.ac-item .ac-check {
+  width: 16px;
+  height: 16px;
+  margin-right: auto;
+  color: var(--purple);
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.ac-item.selected .ac-check {
+  opacity: 1;
+}
+.ac-highlight {
+  background: var(--gold-pale);
+  border-radius: 3px;
+  padding: 0 1px;
+}
+.ac-empty {
+  padding: 20px 16px;
+  text-align: center;
+  color: var(--text-faint);
+  font-size: 13px;
+}
+.ac-loading {
+  padding: 20px 16px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.ac-loading .spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--purple-mist);
+  border-top-color: var(--purple);
+  border-radius: 50%;
+  animation: acSpin 0.6s linear infinite;
+}
+@keyframes acSpin {
+  to { transform: rotate(360deg); }
+}
+
 /* ═══════ PRODUCT TABLE ═══════ */
 .product-section {
   padding-bottom: 20px;
@@ -2057,7 +2181,7 @@ input[type="date"] {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
-<div style="position:fixed;top:8px;left:8px;z-index:9999;background:#503AA8;color:white;font-size:11px;font-weight:700;padding:3px 10px;border-radius:100px;opacity:0.85;font-family:'Heebo',sans-serif;">V0.5</div>
+<div style="position:fixed;top:8px;left:8px;z-index:9999;background:#503AA8;color:white;font-size:11px;font-weight:700;padding:3px 10px;border-radius:100px;opacity:0.85;font-family:'Heebo',sans-serif;">V0.6</div>
 
 <!-- Decorative background -->
 <div class="deco-grid"></div>
@@ -2704,39 +2828,95 @@ async function fetchStreets(cityCode) {
   return streetsCache[cityCode];
 }
 
-// Load cities on page load
-fetchCities().then(cities => {
-  const dl = document.getElementById('cityList');
-  cities.forEach(c => {
-    const opt = document.createElement('option');
-    opt.value = c.name;
-    opt.dataset.code = c.code;
-    dl.appendChild(opt);
+// ═══════ AUTOCOMPLETE HELPERS ═══════
+function setupAutocomplete(inputId, dropdownId, getItems, onSelect) {
+  const input = document.getElementById(inputId);
+  const dropdown = document.getElementById(dropdownId);
+  let items = [];
+  let activeIdx = -1;
+
+  function render(filtered) {
+    dropdown.innerHTML = '';
+    activeIdx = -1;
+    if (filtered.length === 0) {
+      dropdown.classList.remove('open');
+      return;
+    }
+    filtered.slice(0, 80).forEach((item, i) => {
+      const div = document.createElement('div');
+      div.className = 'ac-item';
+      div.textContent = item.name;
+      div.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        input.value = item.name;
+        dropdown.classList.remove('open');
+        if (onSelect) onSelect(item);
+      });
+      dropdown.appendChild(div);
+    });
+    dropdown.classList.add('open');
+  }
+
+  input.addEventListener('focus', async () => {
+    items = await getItems();
+    const val = input.value.trim();
+    const filtered = val ? items.filter(c => c.name.includes(val)) : items;
+    render(filtered);
   });
+
+  input.addEventListener('input', async () => {
+    items = await getItems();
+    const val = input.value.trim();
+    const filtered = val ? items.filter(c => c.name.includes(val)) : items;
+    render(filtered);
+  });
+
+  input.addEventListener('blur', () => {
+    setTimeout(() => dropdown.classList.remove('open'), 150);
+  });
+
+  input.addEventListener('keydown', (e) => {
+    const acItems = dropdown.querySelectorAll('.ac-item');
+    if (!acItems.length) return;
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      activeIdx = Math.min(activeIdx + 1, acItems.length - 1);
+      acItems.forEach((el, i) => el.classList.toggle('ac-active', i === activeIdx));
+      acItems[activeIdx]?.scrollIntoView({ block: 'nearest' });
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      activeIdx = Math.max(activeIdx - 1, 0);
+      acItems.forEach((el, i) => el.classList.toggle('ac-active', i === activeIdx));
+      acItems[activeIdx]?.scrollIntoView({ block: 'nearest' });
+    } else if (e.key === 'Enter' && activeIdx >= 0) {
+      e.preventDefault();
+      acItems[activeIdx]?.dispatchEvent(new Event('mousedown'));
+    }
+  });
+}
+
+// ═══════ INIT CITY AUTOCOMPLETE ═══════
+fetchCities().then(() => {
   document.getElementById('city').placeholder = 'הקלד לחיפוש עיר...';
 }).catch(e => console.warn('[EIIT] שגיאה בטעינת ערים:', e));
 
-// When city is selected, load its streets
-document.getElementById('city').addEventListener('input', async function() {
-  const cities = await fetchCities();
-  const match = cities.find(c => c.name === this.value);
-  if (!match) return;
-  selectedCityCode = match.code;
-
-  const streets = await fetchStreets(match.code);
-  const dl = document.getElementById('streetList');
-  dl.innerHTML = '';
-  streets.forEach(s => {
-    const opt = document.createElement('option');
-    opt.value = s.name;
-    dl.appendChild(opt);
-  });
-
+setupAutocomplete('city', 'cityDropdown', fetchCities, async (city) => {
+  selectedCityCode = city.code;
   const streetInput = document.getElementById('street');
-  streetInput.placeholder = 'הקלד לחיפוש רחוב...';
+  streetInput.disabled = false;
+  streetInput.placeholder = 'טוען רחובות...';
   streetInput.value = '';
+
+  await fetchStreets(city.code);
+  streetInput.placeholder = 'הקלד לחיפוש רחוב...';
   streetInput.focus();
 });
+
+// ═══════ INIT STREET AUTOCOMPLETE ═══════
+setupAutocomplete('street', 'streetDropdown',
+  async () => selectedCityCode ? await fetchStreets(selectedCityCode) : [],
+  null
+);
 
 /* ═══════ SUPABASE CONFIG ═══════ */
 const SUPABASE_URL = 'https://tmuijibbpwkfjmkgbddb.supabase.co';
