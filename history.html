@@ -1497,9 +1497,11 @@ async function shareOrderOnWhatsApp(orderId) {
     // Build PDF HTML
     const htmlContent = buildOrderPDFHtml(order);
     const container = document.createElement('div');
-    container.style.position = 'fixed';
-    container.style.left = '-9999px';
+    container.style.position = 'absolute';
+    container.style.left = '0';
     container.style.top = '0';
+    container.style.zIndex = '-9999';
+    container.style.opacity = '1';
     container.innerHTML = htmlContent;
     document.body.appendChild(container);
 
